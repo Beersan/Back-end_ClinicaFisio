@@ -1,9 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-
-
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
@@ -40,8 +37,10 @@ router.get('/precadastro', function (req, res, next) {
  		"contato1": "49988155536",
  		"contato2": "49984155536",
  		"encaminhamento_med": "sim",
- 		"area_especialidade": "coluna"
- };
+		 "area_especialidade": "coluna"
+		 
+	};
+	
  console.log(response);
  res.end(JSON.stringify(response));
 });
