@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-router.post('/routes', function(req, res){
+router.post('/', function(req, res, next){
   res.send({
     message: 'Welcome, friend!'
   });
 });
+
+
 /*if(req.body.name.toLowerCase() === 'homer'){
 
     res.status(401).send({message: 'Sorry, no Homer\'s!'});
@@ -20,3 +22,4 @@ router.post('/routes', function(req, res){
 }*/
   
 module.exports = router;
+
