@@ -10,6 +10,7 @@ var estagiario = require('./routes/estagiario');
 var especialidade = require('./routes/especialidade');
 var users = require('./routes/users');
 var grupo = require('./routes/grupo');
+var preCadastro = require('./routes/preCadastro');
 
 var app = express();
 
@@ -34,6 +35,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('/preCadastro', preCadastro);
 app.use('/users', users);
 app.use('/estagiario', estagiario);
 app.use('/especialidade', especialidade);
