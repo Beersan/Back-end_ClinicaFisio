@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var estagiario = require('./routes/estagiario');
 var especialidade = require('./routes/especialidade');
+var relatarProblema = require('./routes/relatarProblema');
 var users = require('./routes/users');
 var grupo = require('./routes/grupo');
 var preCadastro = require('./routes/preCadastro');
@@ -39,6 +40,7 @@ app.use('/preCadastro', preCadastro);
 app.use('/users', users);
 app.use('/estagiario', estagiario);
 app.use('/especialidade', especialidade);
+app.use('/problema', relatarProblema);
 app.use('/grupo', grupo);
 
 // catch 404 and forward to error handler

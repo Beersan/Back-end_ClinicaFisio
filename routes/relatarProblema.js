@@ -15,9 +15,9 @@ router.post('/relatarProblema', function(req, res){
     ssl: true,
   });
 
-  const data = {problema: req.body.descricaoProblema};
+  const data = {descricaoProblema: req.body.descricaoProblema};
 
-  //console.log('teste' + JSON.stringify(data));
+  console.log('testeas3');
 
   client.connect((err, client, done) => {
     if(err){
@@ -26,7 +26,7 @@ router.post('/relatarProblema', function(req, res){
       return res.status(500).json({success: false, data: err});
     }
 
-    client.query("INSERT INTO relatarproblema(descricaoproblema) values($1)", [data.descricaoProblema]);
+    client.query("INSERT INTO problema(descricaoproblema) values($1)", [data.descricaoProblema]);
     //client.end();
 
     res.send({
