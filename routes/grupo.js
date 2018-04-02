@@ -21,7 +21,7 @@ router.post('/cadastrar', function(req, res){
   }); 
 });
 
-/*router.get('/listar', function(req, res, next) {
+router.get('/listar', function(req, res, next) {
     const client = new Client({
       connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
       ssl: true,
@@ -58,7 +58,7 @@ router.post('/cadastrar', function(req, res){
       connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
       ssl: true,
     });
-    const data = {descricaoGrupo: req.body.descricaoGrupo, idGrupo: req.body.idGrupo};
+    const data = {descricaoGrupo: req.body.descricao, idGrupo: req.body.idGrupo};
     
     client.connect((err, client, done) => {
       if(err){
@@ -70,6 +70,6 @@ router.post('/cadastrar', function(req, res){
         message: 'ok'
       });
     }); 
-  });*/
+  });
 
   module.exports = router;
