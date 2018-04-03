@@ -39,7 +39,7 @@ router.post('/excluir', function(req, res){
     connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
     ssl: true,
   });
-  const data = {codigoespecialidade: req.body.codigoEspecialidade};
+  const data = {codigoEspecialidade: req.body.codigoEspecialidade};
 
   client.connect((err, client, done) => {
     if(err){
@@ -58,14 +58,16 @@ router.post('/editar', function(req, res){
     connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
     ssl: true,
   });
-  const data = {nome: req.body.descricaoEspecialidade};
+  const data = {descricaoespecialidade: req.body.descricaoEspecialidade, codigoespecialidade: req.body.codigoespecialidade};
+  console.log(req.body.descricaoEspecialidade);
+  console.log(req.body.codigoespecialidade);
 
   client.connect((err, client, done) => {
     if(err){
       console.log(err);
       return res.status(500).json({success: false, data: err});
     }
-    client.query("update especialidade set descricaoespecialidade = ($1) where codigoespecialidade = ($5)", [data.descricaoEspecialidade, data.codigoEspecialidade]);
+    client.query("update especialidade set descricaoespecialidade = ($1) where codigoespecialidade = ($2)", [data.descricaoEspecialidade, data.codigoEspecialidade]);
     res.send({
       message: 'ok'
     });
