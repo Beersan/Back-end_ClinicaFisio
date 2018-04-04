@@ -12,6 +12,7 @@ var relatarProblema = require('./routes/relatarProblema');
 var users = require('./routes/users');
 var grupo = require('./routes/grupo');
 var preCadastro = require('./routes/preCadastro');
+var grupoEstagiario = require('./routes/grupoEstagiario');
 
 var app = express();
 
@@ -42,6 +43,7 @@ app.use('/estagiario', estagiario);
 app.use('/especialidade', especialidade);
 app.use('/problema', relatarProblema);
 app.use('/grupo', grupo);
+app.use('/grupoEstagiario', grupoEstagiario);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
