@@ -8,7 +8,7 @@ router.get('/listarestagiario', function(req, res, next) {
       ssl: true,
     });
     client.connect();  
-    client.query('SELECT * from estagiario ;', (err, response) => {
+    client.query("SELECT idestagiario, nomeestagiario, 'false' AS checked from estagiario ;", (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
