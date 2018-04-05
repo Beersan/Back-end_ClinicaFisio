@@ -7,14 +7,14 @@ router.post('/cadastrar', function(req, res){
     connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
     ssl: true,
   });
-  const data = {descricaoEspecialidade: req.body.descricaoEspecialidade};
+  const data = {descricaoespecialidade: req.body.descricaoEspecialidade};
 
   client.connect((err, client, done) => {
     if(err){
       console.log(err);
       return res.status(500).json({success: false, data: err});
     }
-    client.query("INSERT INTO especialidade(descricaoespecialidade) values($1)", [data.descricaoEspecialidade]);
+    client.query("INSERT INTO especialidade(descricaoespecialidade) values($1)", [data.descricaoespecialidade]);
     res.send({
       message: 'ok'
     });
@@ -58,16 +58,15 @@ router.post('/editar', function(req, res){
     connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
     ssl: true,
   });
-  const data = {descricaoespecialidade: req.body.descricaoEspecialidade, codigoespecialidade: req.body.codigoespecialidade};
-  console.log(req.body.descricaoEspecialidade);
-  console.log(req.body.codigoespecialidade);
+  const data = {codigoespecialidade: req.body.codigoEspecialidade, descricaoespecialidade: req.body.descricaoEspecialidade};
 
   client.connect((err, client, done) => {
     if(err){
       console.log(err);
       return res.status(500).json({success: false, data: err});
     }
-    client.query("update especialidade set descricaoespecialidade = ($1) where codigoespecialidade = ($2)", [data.descricaoEspecialidade, data.codigoEspecialidade]);
+    console.log("/editaaarrr");
+    client.query("UPDATE especialidade SET descricaoespecialidade = ($2) where codigoespecialidade = ($1)", [data.codigoespecialidade, data.descricaoespecialidade]);
     res.send({
       message: 'ok'
     });
