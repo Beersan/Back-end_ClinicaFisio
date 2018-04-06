@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
-const { Client } = require('pg');
+var nodemailer = require('nodemailer');
+//const { Client } = require('pg');
 
 router.post('/relatarProblema', function(req, res){
-  const client = new Client({
+  /*const client = new Client({
     connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
     ssl: true,
   });
@@ -18,10 +19,48 @@ router.post('/relatarProblema', function(req, res){
     res.send({
       message: 'ok'
     });
+  });*/
+
+  //NODEMAILER
+  console.log("Teste nodemailer, funciona, definir se assim é um bom meio de o fazer")
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'no.reply.fisio@gmail.com',
+      pass: 'fisiofisio'
+    }
+    /*host: "ec2-54-221-220-59.compute-1.amazonaws.com",
+    port: 5432,
+    secure: true, // true for 465, false for other ports
+    auth: {
+      user: "no-reply@reclamacoes.com",
+      pass: "herokuuu"
+    }*/,
+    tls: { rejectUnauthorized: false }
   });
+  const data = {descricaoProblema: req.body.descricaoProblema};
+  
+  var mailOptions = {
+    from: 'no.reply.fisio@gmail.com',
+    to: 'daniel_bressan125@hotmail.com',
+    subject: 'Reclamação!!',
+    text: data.descricaoProblema
+  };
+  
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email enviado: ' + info.response);
+    }
+  });
+  res.send({
+    message: 'ok'
+  });
+
 });
 
-router.get('/listarProblemas', function(req, res, next) {
+/*router.get('/listarProblemas', function(req, res, next) {
   const client = new Client({
     connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
     ssl: true,
@@ -71,5 +110,5 @@ router.post('/editar', function(req, res){
     });
   });
 });
-
+*/
 module.exports = router;
