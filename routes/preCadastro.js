@@ -71,16 +71,35 @@ router.get('/listarPacientes', function(req, res, next) {
   });
   client.connect();  
 
-
   client.query('SELECT P.bairropaciente, P.cidadepaciente, P.codigoespecialidade, P.contato1paciente, '
                 + ' P.contato2paciente, P.cpfpaciente, P.datanascpaciente, P.encmedicopaciente, '
                 + ' P.enderecopaciente,	P.idpaciente,	P.nomepaciente,	P.numeropaciente, '
                 + ' P.observacoespaciente,	P.rendapaciente,	P.rgpaciente, E.descricaoespecialidade '
                 + ' FROM paciente P '
-                + ' INNER JOIN especialidade E ON E.codigoespecialidade = P.codigoespecialidade', (err, response) => {
+                + ' INNER JOIN especialidade E ON E.codigoespecialidade = P.codigoespecialidade'
+                + ' ORDER BY P.nomepaciente, P.rendapaciente ', (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          
+});
+
+router.post('/excluir', function(req, res){ 
+  const client = new Client({
+    connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
+    ssl: true,
+  });
+  const data = {idpaciente: req.body.idPaciente};
+  console.log(data)
+  client.connect((err, client, done) => {
+    if(err){
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }    
+    client.query("DELETE FROM paciente WHERE idpaciente = $1", [data.idpaciente]);         
+    res.send({
+      message: 'ok'
+    });
+  }); 
 });
 
 module.exports = router;
