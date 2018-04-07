@@ -33,7 +33,6 @@ router.get('/listar', function(req, res, next) {
   });
 });
 
-
 router.post('/excluir', function(req, res){
   const client = new Client({
     connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
@@ -65,7 +64,6 @@ router.post('/editar', function(req, res){
       console.log(err);
       return res.status(500).json({success: false, data: err});
     }
-    console.log("/editaaarrr");
     client.query("UPDATE especialidade SET descricaoespecialidade = ($2) where codigoespecialidade = ($1)", [data.codigoespecialidade, data.descricaoespecialidade]);
     res.send({
       message: 'ok'
