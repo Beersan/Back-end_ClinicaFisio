@@ -34,13 +34,13 @@ router.get('/listarestagiario', function(req, res, next) {
     });
     
     const data = {grupo: req.body.grupo, codigos: req.body.codigos};
-    
+  
     client.connect((err, client, done) => {
       if(err){
         console.log(err);
         return res.status(500).json({success: false, data: err});
       }
-      console.log(data.codigos.length);
+      client.query("DELETE FROM grupoestagiarios WHERE idgrupo = $1", [data.grupo]);         
       for (i = 0; i <= data.codigos.length; i++){
         client.query("INSERT INTO grupoestagiarios(idestagiario, idgrupo) values($1, $2)", [data.codigos[i], data.grupo]);         
       }
@@ -87,16 +87,11 @@ router.get('/listarestagiario', function(req, res, next) {
     });
     console.log(req.body.idGrupo);
     const data = {idgrupo: req.body.idGrupo};
-    client.connect((err, client, done) => {
-      if(err){
-        console.log(err);
-        return res.status(500).json({success: false, data: err});
-      }    
-      client.query("SELECT G.idestagiario, E.nomeestagiario, 'true' AS checked FROM grupoestagiarios G INNER JOIN estagiario E ON E.idestagiario = G.idestagiario WHERE G.idgrupo = $1 UNION SELECT idestagiario, nomeestagiario, 'false' AS checked FROM estagiario E WHERE E.idestagiario not in (select idestagiario from grupoestagiarios)", [data.idgrupo], (err, response) => {
-        if (err) throw err;
-        res.send(response.rows);
-      });   
-    }); 
+    client.connect();        
+    client.query("SELECT G.idestagiario, E.nomeestagiario, 'true' AS checked FROM grupoestagiarios G INNER JOIN estagiario E ON E.idestagiario = G.idestagiario WHERE G.idgrupo = $1 UNION SELECT idestagiario, nomeestagiario, 'false' AS checked FROM estagiario E WHERE E.idestagiario not in (select idestagiario from grupoestagiarios)", [data.idgrupo], (err, response) => {
+      if (err) throw err;
+      res.send(response.rows);
+    });        
   });
   
   module.exports = router;
