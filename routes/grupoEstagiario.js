@@ -80,26 +80,23 @@ router.get('/listarestagiario', function(req, res, next) {
     }); 
   });
 
-  /*router.post('/listarestagiariosditar', function(req, res){ 
+  router.post('/listarestagiarioseditar', function(req, res){ 
     const client = new Client({
       connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
       ssl: true,
     });
-    const data = {descricaoGrupo: req.body.descricao, idGrupo: req.body.idGrupo};
-    
+    console.log(req.body.idGrupo);
+    const data = {idgrupo: req.body.idGrupo};
     client.connect((err, client, done) => {
       if(err){
         console.log(err);
         return res.status(500).json({success: false, data: err});
       }    
-      client.query("SELECT G.idestagiario, E.nomeestagiario, 'true' AS checked FROM grupoestagiarios G INNER JOIN estagiario E ON E.idestagiario = G.idestagiario WHERE G.idgrupo = 3 UNION SELECT idestagiario, nomeestagiario, 'false' AS checked FROM estagiario E WHERE E.idestagiario not in (select idestagiario from grupoestagiarios)", [data.descricaoGrupo, data.idGrupo]);         
-      res.send({
-        message: 'ok'
-      });
+      client.query("SELECT G.idestagiario, E.nomeestagiario, 'true' AS checked FROM grupoestagiarios G INNER JOIN estagiario E ON E.idestagiario = G.idestagiario WHERE G.idgrupo = $1 UNION SELECT idestagiario, nomeestagiario, 'false' AS checked FROM estagiario E WHERE E.idestagiario not in (select idestagiario from grupoestagiarios)", [data.idgrupo], (err, response) => {
+        if (err) throw err;
+        res.send(response.rows);
+      });   
     }); 
-  });*/
-
-
-
+  });
   
   module.exports = router;
