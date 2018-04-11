@@ -8,7 +8,7 @@ router.get('/listarestagiario', function(req, res, next) {
       ssl: true,
     });
     client.connect();  
-    client.query("SELECT idestagiario, nomeestagiario, 'false' AS checked from estagiario where idestagiario not in (select idestagiario from grupoestagiarios);", (err, response) => {
+    client.query("SELECT idestagiario, nomeestagiario, 'false' AS checked from estagiario where idestagiario not in (select idestagiario FROM grupoestagiarios) ORDER BY nomeestagiario ASC;", (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
