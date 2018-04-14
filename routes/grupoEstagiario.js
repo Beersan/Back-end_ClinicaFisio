@@ -88,7 +88,15 @@ router.get('/listarestagiario', function(req, res, next) {
     console.log(req.body.idGrupo);
     const data = {idgrupo: req.body.idGrupo};
     client.connect();        
-    client.query("SELECT G.idestagiario, E.nomeestagiario, 'true' AS checked FROM grupoestagiarios G INNER JOIN estagiario E ON E.idestagiario = G.idestagiario WHERE G.idgrupo = $1 UNION SELECT idestagiario, nomeestagiario, 'false' AS checked FROM estagiario E WHERE E.idestagiario not in (select idestagiario from grupoestagiarios)", [data.idgrupo], (err, response) => {
+    client.query(" SELECT grupoestagiarios.idestagiario, nomeestagiario, 'true' AS checked" 
+                + "    FROM grupoestagiarios"
+                + "      INNER JOIN estagiario ON estagiario.idestagiario = grupoestagiarios.idestagiario "
+                + "    WHERE grupoestagiarios.idgrupo = $1"
+                + "  UNION "
+                + "  SELECT idestagiario, nomeestagiario, 'false' AS checked "
+                + "     FROM estagiario"
+                + "     WHERE idestagiario not in (select idestagiario from grupoestagiarios)"
+                + "  ORDER BY nomeestagiario", [data.idgrupo], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });        
