@@ -21,7 +21,7 @@ router.post('/relatarProblema', function(req, res){
   
   var mailOptions = {
     from: 'no.reply.fisio@gmail.com',
-    to: 'daniel_bressan125@hotmail.com',
+    to: 'danconte72@gmail.com',
     subject: "OUVIDORIA CLÍNICA FISIOTERAPIA - " + data.assuntoProblema,
     text: data.descricaoProblema
   };
