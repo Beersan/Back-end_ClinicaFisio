@@ -27,7 +27,7 @@ router.get('/listar', function(req, res, next) {
     ssl: true,
   });
   client.connect();  
-  client.query('SELECT * from reservasala order by datareserva;', (err, response) => {
+  client.query("SELECT solicitante, salareserva, TO_CHAR(datareserva, 'DD/MM/YYYY') from reservasala order by datareserva;", (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          
