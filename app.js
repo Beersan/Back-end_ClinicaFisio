@@ -14,7 +14,7 @@ var grupo = require('./routes/grupo');
 var preCadastro = require('./routes/preCadastro');
 var grupoEstagiario = require('./routes/grupoEstagiario');
 var semestre = require('./routes/semestre');
-var reservarSala = require('./routes/reservarSala')
+var reservaSala = require('./routes/reservaSala')
 
 var app = express();
 
@@ -47,7 +47,7 @@ app.use('/problema', relatarProblema);
 app.use('/grupo', grupo);
 app.use('/grupoEstagiario', grupoEstagiario);
 app.use('/semestre', semestre);
-app.use('/reservarSala', reservarSala)
+app.use('/reservaSala', reservaSala)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
