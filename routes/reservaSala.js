@@ -27,7 +27,7 @@ router.get('/listar', function(req, res, next) {
     ssl: true,
   });
   client.connect();  
-  client.query("SELECT solicitante, salareserva, TO_CHAR(datareserva, 'DD/MM/YYYY') from reservasala order by datareserva;", (err, response) => {
+  client.query('SELECT * from reservasala order by datareserva;', (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          
@@ -65,7 +65,7 @@ router.post('/editar', function(req, res){
       console.log(err);
       return res.status(500).json({success: false, data: err});
     }    
-    client.query("UPDATE reserva SET solicitante = ($1), salareserva = ($2), datareserva = ($3) where idreserva = ($4)", [data.solicitante, data.salaReserva, data.dataReserva, data.idReserva]);         
+    client.query("UPDATE reservasala SET solicitante = ($1), salareserva = ($2), datareserva = ($3) where idreserva = ($4)", [data.solicitante, data.salaReserva, data.dataReserva, data.idReserva]);         
     res.send({
       message: 'ok'
     });
