@@ -1,24 +1,21 @@
 var express = require('express');
 var router = express.Router();
-const { Client } = require('pg');
 
-router.get('/listarEspecialidade', function(req, res, next) {
-  const client = new Client({
-    connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
-    ssl: true,
-  });
-  client.connect();  
+const { Client } = require('pg');
+const client = new Client({
+  connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
+  ssl: true,
+});
+client.connect(); 
+
+router.get('/listarEspecialidade', function(req, res, next) {   
   client.query('SELECT * from especialidade;', (err, response) => {
     if (err) throw err;
     res.send(response.rows);
-  });          
+  });
 });
 
 router.post('/gravar', function(req, res){ 
-  const client = new Client({
-    connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
-    ssl: true,
-  });
   const data = {
     nomePaciente: req.body.nomePaciente, 
     registroGeral: req.body.registroGeral,
@@ -35,12 +32,7 @@ router.post('/gravar', function(req, res){
     telefoneDois: req.body.telefoneDois
   };
   
-  client.connect((err, client, done) => {
-    if(err){
-      console.log(err);
-      return res.status(500).json({success: false, data: err});
-    }    
-    client.query("INSERT INTO paciente (nomepaciente, rgpaciente, cpfpaciente, datanascpaciente, rendapaciente, " 
+  client.query("INSERT INTO paciente (nomepaciente, rgpaciente, cpfpaciente, datanascpaciente, rendapaciente, " 
                                         + " enderecopaciente, numeropaciente, bairropaciente, cidadepaciente, "
                                         + "encmedicopaciente, codigoespecialidade, contato1paciente, contato2paciente ) "
                                         + " VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)", 
@@ -57,49 +49,32 @@ router.post('/gravar', function(req, res){
                                           data.especialidade, 
                                           data.telefoneUm, 
                                           data.telefoneDois
-                                        ]);         
-    res.send({
-      message: 'ok'
-    });
-  });   
+                                        ], (err, response) => {
+                                          res.send({message: 'ok'});
+                                        });         
+    
 });
 
 router.get('/listarPacientes', function(req, res, next) {
-  const client = new Client({
-    connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
-    ssl: true,
-  });
-  client.connect();  
-
-  client.query('SELECT P.bairropaciente, P.cidadepaciente, P.codigoespecialidade, P.contato1paciente, '
-                + ' P.contato2paciente, P.cpfpaciente, P.datanascpaciente, P.encmedicopaciente, '
-                + ' P.enderecopaciente,	P.idpaciente,	P.nomepaciente,	P.numeropaciente, '
-                + ' P.observacoespaciente,	P.rendapaciente,	P.rgpaciente, E.descricaoespecialidade '
-                + ' FROM paciente P '
-                + ' INNER JOIN especialidade E ON E.codigoespecialidade = P.codigoespecialidade'
-                + ' ORDER BY P.nomepaciente, P.rendapaciente ', (err, response) => {
+  client.query("SELECT P.bairropaciente, P.cidadepaciente, P.codigoespecialidade, P.contato1paciente, "
+                + " CASE WHEN P.contato2paciente IS NULL THEN 'Não informado' ELSE P.contato2paciente END AS telefone2 , "
+                + " P.cpfpaciente, P.datanascpaciente, P.encmedicopaciente, "
+                + " P.enderecopaciente,	P.idpaciente,	P.nomepaciente,	P.numeropaciente, "
+                + " P.observacoespaciente,	P.rendapaciente,	P.rgpaciente, E.descricaoespecialidade "
+                + " FROM paciente P "
+                + " INNER JOIN especialidade E ON E.codigoespecialidade = P.codigoespecialidade" 
+                + " WHERE P.aprovado IS NULL " 
+                + " ORDER BY P.rendapaciente, P.nomepaciente ", (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          
 });
 
-router.post('/excluir', function(req, res){ 
-  const client = new Client({
-    connectionString: 'postgres://avzgogfkefojwd:98673260249a154f7aec7832ad4e843fe04bf1debc600e98f04b82c2da2c64ea@ec2-54-221-220-59.compute-1.amazonaws.com:5432/dcasactg6t0691',
-    ssl: true,
-  });
-  const data = {idpaciente: req.body.idPaciente};
-  console.log(data)
-  client.connect((err, client, done) => {
-    if(err){
-      console.log(err);
-      return res.status(500).json({success: false, data: err});
-    }    
-    client.query("DELETE FROM paciente WHERE idpaciente = $1", [data.idpaciente]);         
-    res.send({
-      message: 'ok'
-    });
-  }); 
+router.post('/excluir', function(req, res){   
+  const data = {idpaciente: req.body.idPaciente};       
+  client.query("UPDATE paciente SET aprovado = 0 WHERE idpaciente = $1", [data.idpaciente], (err,response)=> {
+    res.send({message: 'ok'});
+  });           
 });
 
 module.exports = router;
