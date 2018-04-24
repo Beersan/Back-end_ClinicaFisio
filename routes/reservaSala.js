@@ -17,7 +17,7 @@ router.post('/cadastrar', function(req, res){
 });
 
 router.get('/listar', function(req, res, next) { 
-  client.query('SELECT * from reservasala order by datareserva;', (err, response) => {
+  client.query('SELECT * from reservasala order by datareserva DESC;', (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          
