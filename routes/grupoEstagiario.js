@@ -24,13 +24,21 @@ router.get('/listarestagiario', function(req, res, next) {
     });          
   });
 
+  router.get('/listarprofessor', function(req, res, next) {
+    
+    client.query('SELECT * from professor where idprofessor not in (select idprofessor from grupoestagiarios) order by nomeprofessor;', (err, response) => {
+      if (err) throw err;
+      res.send(response.rows);
+    });          
+  });
+
   router.post('/cadastrar', function(req, res){ 
     
-    const data = {grupo: req.body.grupo, codigos: req.body.codigos};
+    const data = {grupo: req.body.grupo, codigos: req.body.codigos, professor: req.body.professor};
    
     client.query("DELETE FROM grupoestagiarios WHERE idgrupo = $1", [data.grupo]);         
     for (i = 0; i <= data.codigos.length; i++){
-      client.query("INSERT INTO grupoestagiarios(idestagiario, idgrupo) values($1, $2)", [data.codigos[i], data.grupo]);         
+      client.query("INSERT INTO grupoestagiarios(idestagiario, idgrupo, idprofessor) values($1, $2, $3)", [data.codigos[i], data.grupo, data.professor]);         
     }
     res.send({
       message: 'ok'
@@ -39,7 +47,7 @@ router.get('/listarestagiario', function(req, res, next) {
 
   router.get('/listargrupoestagiario', function(req, res, next) {
       
-    client.query("SELECT G.idgrupo, G.descricaogrupo, string_agg(E.nomeestagiario, ', ') as nomes FROM grupoestagiarios GE INNER JOIN estagiario E ON E.idestagiario = GE.idestagiario INNER JOIN grupo G ON G.idgrupo = GE.idgrupo GROUP BY G.idgrupo", (err, response) => {
+    client.query("SELECT G.idgrupo, P.idprofessor, G.descricaogrupo, P.nomeprofessor, string_agg(E.nomeestagiario, ', ') as nomes FROM grupoestagiarios GE INNER JOIN estagiario E ON E.idestagiario = GE.idestagiario INNER JOIN grupo G ON G.idgrupo = GE.idgrupo INNER JOIN professor P on P.idprofessor = GE.idprofessor GROUP BY G.idgrupo, P.idprofessor", (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          

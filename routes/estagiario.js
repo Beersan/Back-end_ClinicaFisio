@@ -31,10 +31,15 @@ router.post('/excluir', function(req, res){
   
   const data = {idEstagiario: req.body.idEstagiario};
   
-  client.query("DELETE FROM estagiario WHERE idestagiario = $1", [data.idEstagiario]);         
-  res.send({
-    message: 'ok'
-  });
+  client.query("DELETE FROM estagiario WHERE idestagiario = $1", [data.idEstagiario], (err, response) => {
+    var msg = "ok";
+    if(err != null){  
+      msg = "erro";
+    }
+    res.send({
+      message: msg
+    });
+  });         
 });
 
 router.post('/editar', function(req, res){ 

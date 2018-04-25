@@ -28,10 +28,16 @@ router.get('/listar', function(req, res, next) {
   router.post('/excluir', function(req, res){ 
     
     const data = {idGrupo: req.body.idGrupo};
-    client.query("DELETE FROM grupo WHERE idgrupo = $1", [data.idGrupo]);         
+    client.query("DELETE FROM grupo WHERE idgrupo = $1", [data.idGrupo], (err, response) => {
+      var msg = "ok";
+      if(err != null){  
+        msg = "erro";
+      }
       res.send({
-        message: 'ok'
+        message: msg
       });
+    });         
+      
   });
   
   router.post('/editar', function(req, res){ 
