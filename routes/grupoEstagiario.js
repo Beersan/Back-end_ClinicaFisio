@@ -24,9 +24,12 @@ router.get('/listarestagiario', function(req, res, next) {
     });          
   });
 
-  router.get('/listarprofessor', function(req, res, next) {
-    
-    client.query('SELECT * from professor where idprofessor not in (select idprofessor from grupoestagiarios) order by nomeprofessor;', (err, response) => {
+  router.post('/listarprofessor', function(req, res, next) {
+
+    const data = {idprofessor: req.body.professor};
+    console.log(req.body);
+    console.log(req);
+    client.query('SELECT * from professor where (idprofessor not in (select idprofessor from grupoestagiarios ) OR idprofessor = $1) order by nomeprofessor', [data.idprofessor], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
