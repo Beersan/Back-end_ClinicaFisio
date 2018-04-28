@@ -9,10 +9,20 @@ const client = new Client({
 client.connect(); 
 
 router.post('/cadastrar', function(req, res){ 
-  const data = {solicitante: req.body.solicitante, salaReserva: req.body.salaReserva, dataReserva: req.body.dataReserva};
+  var data = {solicitante: req.body.solicitante, salaReserva: req.body.salaReserva, dataReserva: req.body.dataReserva};
   
   client.query("INSERT INTO reservasala(solicitante, salareserva, datareserva) values($1, $2, $3)", [data.solicitante, data.salaReserva, data.dataReserva], (err, response) => {
     res.send({message: 'ok'});
+  });   
+});
+
+router.post('/listarDataReserva', function(req, res, next) { 
+  var data = {salaReserva: req.body.sala};
+  console.log(req.body);
+
+  client.query('SELECT datareserva from reservasala where salareserva = $1 ', [data.salaReserva], (err, response) => {
+    if (err) throw err;
+    res.send(response.rows);
   });
 });
 
@@ -40,3 +50,25 @@ router.post('/editar', function(req, res){
 });
 
 module.exports = router;
+
+/*var datasReserva = [];
+  var eIgual = false;
+
+  client.query('SELECT datareserva from reservasala;', (err, response) => {
+    if (err) throw err;
+    datasReserva = datareserva;
+
+    for(var i = 0; i < datasReserva.length; i++){
+      if(data.dataReserva == datasReserva[i]){
+        eIgual = true;
+      }
+    }
+
+    if(eIgual){
+      res.send({});
+    } else{
+      client.query("INSERT INTO reservasala(solicitante, salareserva, datareserva) values($1, $2, $3)", [data.solicitante, data.salaReserva, data.dataReserva], (err, response) => {
+        res.send({message: 'ok'});
+      });
+    }
+  });*/
