@@ -1,0 +1,27 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Lista de semestres</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+  <ion-searchbar (ionInput)="filtrarItens($event)"></ion-searchbar>
+  <button ion-button float-right (click)="incluir()">Adicionar</button>
+  <ion-grid>
+    <ion-row>
+      <ion-col><h6>Descrição</h6></ion-col>
+      <ion-col><h6>Data Inicio</h6></ion-col>
+      <ion-col><h6>Data Fim</h6></ion-col>
+      <ion-col></ion-col>
+    </ion-row>
+    <ion-row *ngFor="let semestre of semestres">
+        <ion-col>{{semestre.nomesemestre}}</ion-col>
+        <ion-col>{{semestre.datainiciosemestre | date: 'dd/MM/yyyy'}}</ion-col>
+        <ion-col>{{semestre.datafimsemestre | date: 'dd/MM/yyyy'}}</ion-col>
+        <ion-col class="iconeDireita">
+            <ion-icon ios="ios-create" md="md-create" title="Editar" (click)="editar(semestre)"></ion-icon>          
+            <ion-icon ios="ios-trash" md="md-trash" title="Excluir" (click)="excluir(semestre.idsemestre)"></ion-icon>
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
