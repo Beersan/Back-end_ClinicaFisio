@@ -333,10 +333,9 @@ var ProfessorProvider = (function () {
     };
     ProfessorProvider = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["B" /* Injectable */])(),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_common_http__["a" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_common_http__["a" /* HttpClient */]) === "function" && _a || Object])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_0__angular_common_http__["a" /* HttpClient */]])
     ], ProfessorProvider);
     return ProfessorProvider;
-    var _a;
 }());
 
 //# sourceMappingURL=professor.js.map
@@ -1250,130 +1249,6 @@ var ListarGrupoEstagiariosPage = (function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ListarGrupoPage; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_grupo_grupo__ = __webpack_require__(116);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__cadastrar_grupo_cadastrar_grupo__ = __webpack_require__(160);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
-
-/**
- * Generated class for the ListarGrupoPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-var ListarGrupoPage = (function () {
-    function ListarGrupoPage(navCtrl, provider, alertCtrl, navParams) {
-        this.navCtrl = navCtrl;
-        this.provider = provider;
-        this.alertCtrl = alertCtrl;
-        this.navParams = navParams;
-    }
-    ListarGrupoPage.prototype.ionViewWillEnter = function () {
-        this.listarGrupo();
-    };
-    ListarGrupoPage.prototype.filtrarItens = function (searchbar) {
-        this.grupos = this.gruposSemFiltro;
-        var q = searchbar.srcElement.value;
-        if (!q) {
-            return;
-        }
-        console.log(this.grupos);
-        this.grupos = this.grupos.filter(function (v) {
-            if (v.descricaogrupo && q) {
-                if (v.descricaogrupo.toLowerCase().indexOf(q.toLowerCase()) > -1) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        console.log(q, this.grupos.length);
-    };
-    ListarGrupoPage.prototype.incluir = function () {
-        this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_3__cadastrar_grupo_cadastrar_grupo__["a" /* CadastrarGrupoPage */], {
-            rootNavCtrl: this.navCtrl
-        });
-    };
-    ListarGrupoPage.prototype.listarGrupo = function () {
-        var _this = this;
-        this.provider.retornarGrupo().then(function (data) {
-            _this.grupos = data;
-            _this.gruposSemFiltro = data;
-            console.log(_this.grupos);
-        })
-            .catch(function (error) { return alert(error); });
-    };
-    ListarGrupoPage.prototype.excluir = function (idGrupo) {
-        var _this = this;
-        var alert = this.alertCtrl.create({
-            title: 'Excluir!',
-            message: 'Deseja excluir esse grupo?',
-            buttons: [
-                {
-                    text: 'Não',
-                    role: 'cancel'
-                },
-                {
-                    text: 'Excluir',
-                    handler: function () {
-                        _this.provider.excluirEstagiario({
-                            idGrupo: idGrupo
-                        }).then(function (result) {
-                            _this.listarGrupo();
-                            _this.showAlert();
-                        });
-                    }
-                }
-            ]
-        });
-        alert.present();
-    };
-    ListarGrupoPage.prototype.showAlert = function () {
-        var alert = this.alertCtrl.create({
-            title: 'Sucesso!',
-            subTitle: 'Grupo excluído.',
-            buttons: ['Ok']
-        });
-        alert.present();
-    };
-    ListarGrupoPage.prototype.editar = function (grupo) {
-        this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_3__cadastrar_grupo_cadastrar_grupo__["a" /* CadastrarGrupoPage */], {
-            rootNavCtrl: this.navCtrl,
-            grupo: grupo
-        });
-    };
-    ListarGrupoPage = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-            selector: 'page-listar-grupo',template:/*ion-inline-start:"C:\Estagio\Front-end_ClinicaFisio-master\src\pages\listar-grupo\listar-grupo.html"*/'<ion-header>\n  <ion-navbar>\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Lista de grupos</ion-title>\n  </ion-navbar>\n</ion-header>\n<ion-content padding>\n    <ion-searchbar (ionInput)="filtrarItens($event)"></ion-searchbar>\n  <button ion-button float-right (click)="incluir()">Adicionar</button>\n  <ion-grid >\n      <ion-row>\n        <ion-col><h6>Descrição</h6></ion-col>\n      </ion-row>\n      <ion-row *ngFor="let grupo of grupos">\n        <ion-col>{{grupo.descricaogrupo}}</ion-col>  \n        <ion-col class="iconeDireita">\n            <ion-icon ios="ios-create" md="md-create" title="Editar" (click)="editar(grupo)"></ion-icon>\n            <ion-icon ios="ios-trash" md="md-trash" title="Excluir" (click)="excluir(grupo.idgrupo)"></ion-icon>\n        </ion-col>\n      </ion-row>\n  </ion-grid>\n</ion-content>\n'/*ion-inline-end:"C:\Estagio\Front-end_ClinicaFisio-master\src\pages\listar-grupo\listar-grupo.html"*/,
-        }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */],
-            __WEBPACK_IMPORTED_MODULE_2__providers_grupo_grupo__["a" /* GrupoProvider */],
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */]])
-    ], ListarGrupoPage);
-    return ListarGrupoPage;
-}());
-
-//# sourceMappingURL=listar-grupo.js.map
-
-/***/ }),
-
-/***/ 163:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ListarPacientesPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(4);
@@ -1535,6 +1410,130 @@ var ListarPacientesPage = (function () {
 
 /***/ }),
 
+/***/ 163:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ListarGrupoPage; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_grupo_grupo__ = __webpack_require__(116);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__cadastrar_grupo_cadastrar_grupo__ = __webpack_require__(160);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+/**
+ * Generated class for the ListarGrupoPage page.
+ *
+ * See https://ionicframework.com/docs/components/#navigation for more info on
+ * Ionic pages and navigation.
+ */
+var ListarGrupoPage = (function () {
+    function ListarGrupoPage(navCtrl, provider, alertCtrl, navParams) {
+        this.navCtrl = navCtrl;
+        this.provider = provider;
+        this.alertCtrl = alertCtrl;
+        this.navParams = navParams;
+    }
+    ListarGrupoPage.prototype.ionViewWillEnter = function () {
+        this.listarGrupo();
+    };
+    ListarGrupoPage.prototype.filtrarItens = function (searchbar) {
+        this.grupos = this.gruposSemFiltro;
+        var q = searchbar.srcElement.value;
+        if (!q) {
+            return;
+        }
+        console.log(this.grupos);
+        this.grupos = this.grupos.filter(function (v) {
+            if (v.descricaogrupo && q) {
+                if (v.descricaogrupo.toLowerCase().indexOf(q.toLowerCase()) > -1) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        console.log(q, this.grupos.length);
+    };
+    ListarGrupoPage.prototype.incluir = function () {
+        this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_3__cadastrar_grupo_cadastrar_grupo__["a" /* CadastrarGrupoPage */], {
+            rootNavCtrl: this.navCtrl
+        });
+    };
+    ListarGrupoPage.prototype.listarGrupo = function () {
+        var _this = this;
+        this.provider.retornarGrupo().then(function (data) {
+            _this.grupos = data;
+            _this.gruposSemFiltro = data;
+            console.log(_this.grupos);
+        })
+            .catch(function (error) { return alert(error); });
+    };
+    ListarGrupoPage.prototype.excluir = function (idGrupo) {
+        var _this = this;
+        var alert = this.alertCtrl.create({
+            title: 'Excluir!',
+            message: 'Deseja excluir esse grupo?',
+            buttons: [
+                {
+                    text: 'Não',
+                    role: 'cancel'
+                },
+                {
+                    text: 'Excluir',
+                    handler: function () {
+                        _this.provider.excluirEstagiario({
+                            idGrupo: idGrupo
+                        }).then(function (result) {
+                            _this.listarGrupo();
+                            _this.showAlert();
+                        });
+                    }
+                }
+            ]
+        });
+        alert.present();
+    };
+    ListarGrupoPage.prototype.showAlert = function () {
+        var alert = this.alertCtrl.create({
+            title: 'Sucesso!',
+            subTitle: 'Grupo excluído.',
+            buttons: ['Ok']
+        });
+        alert.present();
+    };
+    ListarGrupoPage.prototype.editar = function (grupo) {
+        this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_3__cadastrar_grupo_cadastrar_grupo__["a" /* CadastrarGrupoPage */], {
+            rootNavCtrl: this.navCtrl,
+            grupo: grupo
+        });
+    };
+    ListarGrupoPage = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
+            selector: 'page-listar-grupo',template:/*ion-inline-start:"C:\Estagio\Front-end_ClinicaFisio-master\src\pages\listar-grupo\listar-grupo.html"*/'<ion-header>\n  <ion-navbar>\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Lista de grupos</ion-title>\n  </ion-navbar>\n</ion-header>\n<ion-content padding>\n    <ion-searchbar (ionInput)="filtrarItens($event)"></ion-searchbar>\n  <button ion-button float-right (click)="incluir()">Adicionar</button>\n  <ion-grid >\n      <ion-row>\n        <ion-col><h6>Descrição</h6></ion-col>\n      </ion-row>\n      <ion-row *ngFor="let grupo of grupos">\n        <ion-col>{{grupo.descricaogrupo}}</ion-col>  \n        <ion-col class="iconeDireita">\n            <ion-icon ios="ios-create" md="md-create" title="Editar" (click)="editar(grupo)"></ion-icon>\n            <ion-icon ios="ios-trash" md="md-trash" title="Excluir" (click)="excluir(grupo.idgrupo)"></ion-icon>\n        </ion-col>\n      </ion-row>\n  </ion-grid>\n</ion-content>\n'/*ion-inline-end:"C:\Estagio\Front-end_ClinicaFisio-master\src\pages\listar-grupo\listar-grupo.html"*/,
+        }),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */],
+            __WEBPACK_IMPORTED_MODULE_2__providers_grupo_grupo__["a" /* GrupoProvider */],
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */]])
+    ], ListarGrupoPage);
+    return ListarGrupoPage;
+}());
+
+//# sourceMappingURL=listar-grupo.js.map
+
+/***/ }),
+
 /***/ 164:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1650,7 +1649,7 @@ var ListarProfessoresPage = (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return RelatarProblemaPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_problema_problema__ = __webpack_require__(243);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_problema_problema__ = __webpack_require__(242);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_forms__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_common_http__ = __webpack_require__(17);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1789,11 +1788,11 @@ var map = {
 		5
 	],
 	"../pages/listar-grupo/listar-grupo.module": [
-		496,
+		497,
 		4
 	],
 	"../pages/listar-pacientes/listar-pacientes.module": [
-		497,
+		496,
 		3
 	],
 	"../pages/listar-professores/listar-professores.module": [
@@ -1804,14 +1803,14 @@ var map = {
 		240
 	],
 	"../pages/pre-cadastro/pre-cadastro.module": [
-		242
+		245
 	],
 	"../pages/relatar-problema/relatar-problema.module": [
 		499,
 		1
 	],
 	"../pages/reservar-sala/reservar-sala.module": [
-		244
+		243
 	],
 	"../pages/sortear-paciente-grupo/sortear-paciente-grupo.module": [
 		500,
@@ -2388,48 +2387,6 @@ var ListarSemestrePage = (function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PreCadastroPageModule", function() { return PreCadastroPageModule; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pre_cadastro__ = __webpack_require__(120);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_brmasker_ionic_3__ = __webpack_require__(83);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-
-
-
-
-var PreCadastroPageModule = (function () {
-    function PreCadastroPageModule() {
-    }
-    PreCadastroPageModule = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["J" /* NgModule */])({
-            declarations: [
-                __WEBPACK_IMPORTED_MODULE_2__pre_cadastro__["a" /* PreCadastroPage */],
-            ],
-            imports: [
-                __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__pre_cadastro__["a" /* PreCadastroPage */]),
-                __WEBPACK_IMPORTED_MODULE_3_brmasker_ionic_3__["a" /* BrMaskerModule */]
-            ],
-            schemas: [__WEBPACK_IMPORTED_MODULE_0__angular_core__["i" /* CUSTOM_ELEMENTS_SCHEMA */]]
-        })
-    ], PreCadastroPageModule);
-    return PreCadastroPageModule;
-}());
-
-//# sourceMappingURL=pre-cadastro.module.js.map
-
-/***/ }),
-
-/***/ 243:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return RelatarProblemaProvider; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_common_http__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
@@ -2488,7 +2445,7 @@ var RelatarProblemaProvider = (function () {
 
 /***/ }),
 
-/***/ 244:
+/***/ 243:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2496,7 +2453,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReservarSalaPageModule", function() { return ReservarSalaPageModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__reservar_sala__ = __webpack_require__(245);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__reservar_sala__ = __webpack_require__(244);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2526,7 +2483,7 @@ var ReservarSalaPageModule = (function () {
 
 /***/ }),
 
-/***/ 245:
+/***/ 244:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2613,6 +2570,48 @@ var ReservarSalaPage = (function () {
 }());
 
 //# sourceMappingURL=reservar-sala.js.map
+
+/***/ }),
+
+/***/ 245:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PreCadastroPageModule", function() { return PreCadastroPageModule; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pre_cadastro__ = __webpack_require__(120);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_brmasker_ionic_3__ = __webpack_require__(83);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+var PreCadastroPageModule = (function () {
+    function PreCadastroPageModule() {
+    }
+    PreCadastroPageModule = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["J" /* NgModule */])({
+            declarations: [
+                __WEBPACK_IMPORTED_MODULE_2__pre_cadastro__["a" /* PreCadastroPage */],
+            ],
+            imports: [
+                __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__pre_cadastro__["a" /* PreCadastroPage */]),
+                __WEBPACK_IMPORTED_MODULE_3_brmasker_ionic_3__["a" /* BrMaskerModule */]
+            ],
+            schemas: [__WEBPACK_IMPORTED_MODULE_0__angular_core__["i" /* CUSTOM_ELEMENTS_SCHEMA */]]
+        })
+    ], PreCadastroPageModule);
+    return PreCadastroPageModule;
+}());
+
+//# sourceMappingURL=pre-cadastro.module.js.map
 
 /***/ }),
 
@@ -2902,7 +2901,7 @@ var ListarEspecialidadePage = (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ListarReservasPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__reservar_sala_reservar_sala__ = __webpack_require__(245);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__reservar_sala_reservar_sala__ = __webpack_require__(244);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__providers_reserva_sala_reserva_sala__ = __webpack_require__(126);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3089,8 +3088,8 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_list_list__ = __webpack_require__(489);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_status_bar__ = __webpack_require__(285);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_splash_screen__ = __webpack_require__(288);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_pre_cadastro_pre_cadastro_module__ = __webpack_require__(242);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_reservar_sala_reservar_sala_module__ = __webpack_require__(244);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_pre_cadastro_pre_cadastro_module__ = __webpack_require__(245);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_reservar_sala_reservar_sala_module__ = __webpack_require__(243);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_cadastrar_especialidade_cadastrar_especialidade__ = __webpack_require__(157);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__providers_especialidade_especialidade__ = __webpack_require__(113);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__pages_cadastrar_estagiario_cadastrar_estagiario__ = __webpack_require__(158);
@@ -3103,13 +3102,13 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__pages_sortear_paciente_grupo_sortear_paciente_grupo__ = __webpack_require__(324);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__pages_cadastrar_grupo_estagiarios_cadastrar_grupo_estagiarios__ = __webpack_require__(159);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__pages_listar_estagiario_listar_estagiario__ = __webpack_require__(290);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__pages_listar_pacientes_listar_pacientes__ = __webpack_require__(163);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__pages_listar_pacientes_listar_pacientes__ = __webpack_require__(162);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__angular_common_http__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_24_brmasker_ionic_3__ = __webpack_require__(83);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__providers_problema_problema__ = __webpack_require__(243);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__providers_problema_problema__ = __webpack_require__(242);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__providers_grupo_grupo__ = __webpack_require__(116);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__providers_pre_cadastro_pre_cadastro__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__pages_listar_grupo_listar_grupo__ = __webpack_require__(162);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__pages_listar_grupo_listar_grupo__ = __webpack_require__(163);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__pages_listar_professores_listar_professores__ = __webpack_require__(164);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__pages_listar_especialidade_listar_especialidade__ = __webpack_require__(291);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__pages_listar_grupo_estagiarios_listar_grupo_estagiarios__ = __webpack_require__(161);
@@ -3209,14 +3208,14 @@ var AppModule = (function () {
                         { loadChildren: '../pages/fila-de-espera/fila-de-espera.module#FilaDeEsperaPageModule', name: 'FilaDeEsperaPage', segment: 'fila-de-espera', priority: 'low', defaultHistory: [] },
                         { loadChildren: '../pages/finalizar-pre-cadastro/finalizar-pre-cadastro.module#FinalizarPreCadastroPageModule', name: 'FinalizarPreCadastroPage', segment: 'finalizar-pre-cadastro', priority: 'low', defaultHistory: [] },
                         { loadChildren: '../pages/listar-grupo-estagiarios/listar-grupo-estagiarios.module#ListarGrupoEstagiariosPageModule', name: 'ListarGrupoEstagiariosPage', segment: 'listar-grupo-estagiarios', priority: 'low', defaultHistory: [] },
-                        { loadChildren: '../pages/listar-grupo/listar-grupo.module#ListarGrupoPageModule', name: 'ListarGrupoPage', segment: 'listar-grupo', priority: 'low', defaultHistory: [] },
                         { loadChildren: '../pages/listar-pacientes/listar-pacientes.module#ListarPacientesPageModule', name: 'ListarPacientesPage', segment: 'listar-pacientes', priority: 'low', defaultHistory: [] },
+                        { loadChildren: '../pages/listar-grupo/listar-grupo.module#ListarGrupoPageModule', name: 'ListarGrupoPage', segment: 'listar-grupo', priority: 'low', defaultHistory: [] },
                         { loadChildren: '../pages/listar-professores/listar-professores.module#ListarProfessoresPageModule', name: 'ListarProfessoresPage', segment: 'listar-professores', priority: 'low', defaultHistory: [] },
                         { loadChildren: '../pages/listar-semestre/listar-semestre.module#ListarSemestrePageModule', name: 'ListarSemestrePage', segment: 'listar-semestre', priority: 'low', defaultHistory: [] },
-                        { loadChildren: '../pages/pre-cadastro/pre-cadastro.module#PreCadastroPageModule', name: 'PreCadastroPage', segment: 'pre-cadastro', priority: 'low', defaultHistory: [] },
                         { loadChildren: '../pages/relatar-problema/relatar-problema.module#RelatarProblemaPageModule', name: 'RelatarProblemaPage', segment: 'relatar-problema', priority: 'low', defaultHistory: [] },
                         { loadChildren: '../pages/reservar-sala/reservar-sala.module#ReservarSalaPageModule', name: 'ReservarSalaPage', segment: 'reservar-sala', priority: 'low', defaultHistory: [] },
-                        { loadChildren: '../pages/sortear-paciente-grupo/sortear-paciente-grupo.module#SortearPacienteGrupoPageModule', name: 'SortearPacienteGrupoPage', segment: 'sortear-paciente-grupo', priority: 'low', defaultHistory: [] }
+                        { loadChildren: '../pages/sortear-paciente-grupo/sortear-paciente-grupo.module#SortearPacienteGrupoPageModule', name: 'SortearPacienteGrupoPage', segment: 'sortear-paciente-grupo', priority: 'low', defaultHistory: [] },
+                        { loadChildren: '../pages/pre-cadastro/pre-cadastro.module#PreCadastroPageModule', name: 'PreCadastroPage', segment: 'pre-cadastro', priority: 'low', defaultHistory: [] }
                     ]
                 }),
                 __WEBPACK_IMPORTED_MODULE_8__pages_pre_cadastro_pre_cadastro_module__["PreCadastroPageModule"],
@@ -3290,8 +3289,8 @@ var AppModule = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_cadastrar_professor_cadastrar_professor__ = __webpack_require__(84);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_relatar_problema_relatar_problema__ = __webpack_require__(165);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_listar_estagiario_listar_estagiario__ = __webpack_require__(290);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_listar_grupo_listar_grupo__ = __webpack_require__(162);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_listar_pacientes_listar_pacientes__ = __webpack_require__(163);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_listar_grupo_listar_grupo__ = __webpack_require__(163);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_listar_pacientes_listar_pacientes__ = __webpack_require__(162);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pages_listar_professores_listar_professores__ = __webpack_require__(164);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__pages_listar_especialidade_listar_especialidade__ = __webpack_require__(291);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__pages_listar_grupo_estagiarios_listar_grupo_estagiarios__ = __webpack_require__(161);
