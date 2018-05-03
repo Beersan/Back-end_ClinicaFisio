@@ -11,7 +11,7 @@ client.connect();
 //Cadastrar Professor 
 
 router.post('/cadastrar', function(req, res){ 
-  const data = {nome: req.body.nomeProfessor, matricula: req.body.matriculaProfessor, crefito: req.body.crefitoProfessor, email: req.body.emailProfessor, telefone: req.body.telefoneProfessor, especialidade: req.body.especialidadeProfessor};
+  const data = {nome: req.body.nomeProfessor, matricula: req.body.matriculaProfessor, crefito: req.body.crefitoProfessor, email: req.body.emailProfessor, telefone: req.body.telefone, especialidade: req.body.especialidade};
   client.query("INSERT INTO PROFESSOR(matriculaProfessor, nomeProfessor, crefitoProfessor, emailProfessor, telefoneProfessor, codigoespecialidade, ativo) values($1, $2, $3, $4, $5, $6, 1)", [data.matricula, data.nome, data.crefito, data.email, data.telefone, data.especialidade]);         
   res.send({
     message: 'ok'
