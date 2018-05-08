@@ -4,7 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
 var index = require('./routes/index');
 var estagiario = require('./routes/estagiario');
 var especialidade = require('./routes/especialidade');
@@ -17,6 +16,7 @@ var semestre = require('./routes/semestre');
 var reservaSala = require('./routes/reservaSala');
 var professor = require('./routes/professor');
 var filaEspera = require('./routes/filaEspera');
+var agenda = require('./routes/agenda');
 
 var app = express();
 
@@ -49,9 +49,10 @@ app.use('/problema', relatarProblema);
 app.use('/grupo', grupo);
 app.use('/grupoEstagiario', grupoEstagiario);
 app.use('/semestre', semestre);
-app.use('/reservaSala', reservaSala)
-app.use('/professor', professor)
-app.use('/filaEspera', filaEspera)
+app.use('/filaEspera', filaEspera);
+app.use('/reservaSala', reservaSala);
+app.use('/professor', professor);
+app.use('/agenda', agenda);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
