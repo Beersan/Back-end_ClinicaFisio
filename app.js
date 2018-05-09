@@ -4,7 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
 var index = require('./routes/index');
 var estagiario = require('./routes/estagiario');
 var especialidade = require('./routes/especialidade');
@@ -16,6 +15,7 @@ var grupoEstagiario = require('./routes/grupoEstagiario');
 var semestre = require('./routes/semestre');
 var reservaSala = require('./routes/reservaSala');
 var professor = require('./routes/professor');
+var filaEspera = require('./routes/filaEspera');
 var agenda = require('./routes/agenda');
 var agendaProfessor = require('./routes/agendaProfessor');
 
@@ -50,6 +50,7 @@ app.use('/problema', relatarProblema);
 app.use('/grupo', grupo);
 app.use('/grupoEstagiario', grupoEstagiario);
 app.use('/semestre', semestre);
+app.use('/filaEspera', filaEspera);
 app.use('/reservaSala', reservaSala);
 app.use('/professor', professor);
 app.use('/agenda', agenda);
