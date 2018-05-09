@@ -41,8 +41,8 @@ router.post('/excluir', function(req, res){
 //Editar Professor
 
 router.post('/editar', function(req, res){ 
-  const data = {idprofessor: req.body.idProfessor,  nome: req.body.nomeProfessor, matricula: req.body.matriculaProfessor, telefone: req.body.telefoneProfessor, crefito: req.body.crefitoProfessor, email: req.body.emailProfessor, especialidade: req.body.especialidadeProfessor};
-  client.query("update PROFESSOR set nomeProfessor = ($1), matriculaProfessor = ($2), emailProfessor = ($3), crefitoProfessor = ($4), telefoneProfessor = ($5) where idprofessor = ($6)", [data.nome, data.matricula, data.email, data.crefito, data.telefone, data.idprofessor]);         
+  const data = {idprofessor: req.body.idProfessor,  nome: req.body.nomeProfessor, matricula: req.body.matriculaProfessor, telefone: req.body.telefone, crefito: req.body.crefitoProfessor, email: req.body.emailProfessor, especialidade: req.body.especialidadeProfessor};
+  client.query("update PROFESSOR set nomeProfessor = ($1), matriculaProfessor = ($2), emailProfessor = ($3), crefitoProfessor = ($4), telefoneProfessor = ($5), especialidadeProfessor = ($6) where idprofessor = ($6)", [data.nome, data.matricula, data.email, data.crefito, data.telefone, data.idprofessor]);         
   res.send({
     message: 'ok'
   });

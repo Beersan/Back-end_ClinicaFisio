@@ -17,6 +17,7 @@ var semestre = require('./routes/semestre');
 var reservaSala = require('./routes/reservaSala');
 var professor = require('./routes/professor');
 var agenda = require('./routes/agenda');
+var agendaProfessor = require('./routes/agendaProfessor');
 
 var app = express();
 
@@ -52,6 +53,7 @@ app.use('/semestre', semestre);
 app.use('/reservaSala', reservaSala);
 app.use('/professor', professor);
 app.use('/agenda', agenda);
+app.use('/agendaProfessor', agendaProfessor)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
