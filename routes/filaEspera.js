@@ -11,7 +11,7 @@ router.get('/listarPacientesFila', function(req, res, next) {
                 + " CASE WHEN encmedpaciente IS NULL THEN 'none' ELSE 'initial' END AS classeenc "
                 + " FROM paciente P "
                 + " INNER JOIN especialidade E ON E.codigoespecialidade = P.codigoespecialidade" 
-                + " WHERE P.aprovado = 1 " 
+                + "   WHERE P.aprovado = 1 " 
                 + " ORDER BY  P.encmedicopaciente DESC, CAST(P.rendapaciente AS INT) ASC ", (err, response) => {
     if (err) throw err;
     res.send(response.rows);
@@ -25,7 +25,10 @@ router.get('/listarEstagiariosFila', function(req, res, next) {
                     + "  		INNER JOIN grupo GR ON GR.idgrupo = GE.idgrupo "
                     + "  		INNER JOIN professor P ON P.idprofessor = GE.idprofessor "
                     + "  		INNER JOIN especialidade ESP ON ESP.codigoespecialidade = P.codigoespecialidade "
-                    + "  	ORDER BY E.nomeestagiario, GR.descricaogrupo" , (err, response) => {
+                    + "     WHERE (SELECT COUNT(EP.idestagiario) "
+                    + "               FROM estagiariopacientes EP " 
+                    + "           WHERE EP.idestagiario = E.idestagiario) <= 2 "
+                    + "  	  ORDER BY E.nomeestagiario, GR.descricaogrupo" , (err, response) => {
         if (err) throw err;
         res.send(response.rows);
     });       
