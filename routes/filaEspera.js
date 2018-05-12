@@ -37,8 +37,8 @@ router.get('/listarEstagiariosFila', function(req, res, next) {
     });       
 });
 
-router.post('/vincularPacienteEstagiario  ', function(req, res){   
-  const data = {paciente: req.body.idpaciente, estagiario: req.body.estagiario};
+router.post('/vincularPacienteEstagiario', function(req, res){   
+  const data = {paciente: req.body.idpaciente, estagiario: req.body.idestagiario};
   
   client.query("INSERT INTO estagiariopacientes (idpaciente,idestagiario)values($1, $2)", [data.paciente, data.estagiario]);         
     res.send({
