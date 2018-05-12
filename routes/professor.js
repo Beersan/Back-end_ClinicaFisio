@@ -5,7 +5,14 @@ var client = require('./dbConnection');
 //Cadastrar Professor 
 
 router.post('/cadastrar', function(req, res){ 
-  const data = {nome: req.body.nomeProfessor, matricula: req.body.matriculaProfessor, crefito: req.body.crefitoProfessor, email: req.body.emailProfessor, telefone: req.body.telefone, especialidade: req.body.especialidade};
+  const data = {
+    nome: req.body.nomeProfessor, 
+    matricula: req.body.matriculaProfessor, 
+    crefito: req.body.crefitoProfessor, 
+    email: req.body.emailProfessor, 
+    telefone: req.body.telefone, 
+    especialidade: req.body.especialidade
+  };
   client.query("INSERT INTO PROFESSOR(matriculaProfessor, nomeProfessor, crefitoProfessor, emailProfessor, telefoneProfessor, codigoespecialidade, ativo) values($1, $2, $3, $4, $5, $6, 1)", [data.matricula, data.nome, data.crefito, data.email, data.telefone, data.especialidade]);         
   res.send({
     message: 'ok'
@@ -35,8 +42,16 @@ router.post('/excluir', function(req, res){
 //Editar Professor
 
 router.post('/editar', function(req, res){ 
-  const data = {idprofessor: req.body.idProfessor,  nome: req.body.nomeProfessor, matricula: req.body.matriculaProfessor, telefone: req.body.telefoneProfessor, crefito: req.body.crefitoProfessor, email: req.body.emailProfessor, especialidade: req.body.especialidadeProfessor};
-  client.query("update PROFESSOR set nomeProfessor = ($1), matriculaProfessor = ($2), emailProfessor = ($3), crefitoProfessor = ($4), telefoneProfessor = ($5) where idprofessor = ($6)", [data.nome, data.matricula, data.email, data.crefito, data.telefone, data.idprofessor]);         
+  const data = {
+    idprofessor: req.body.idProfessor,
+    nome: req.body.nomeProfessor,
+    matricula: req.body.matriculaProfessor, 
+    crefito: req.body.crefitoProfessor, 
+    email: req.body.emailProfessor, //5
+    telefone: req.body.telefone, //6
+    especialidade: req.body.especialidade
+  };
+  client.query("update PROFESSOR set nomeProfessor = ($1), matriculaProfessor = ($2), telefoneProfessor = ($3), crefitoProfessor = ($4), emailProfessor = ($5), codigoEspecialidade = ($6) where idprofessor = ($7)", [data.nome, data.matricula, data.telefone, data.crefito, data.email, data.especialidade, data.idprofessor]);         
   res.send({
     message: 'ok'
   });
