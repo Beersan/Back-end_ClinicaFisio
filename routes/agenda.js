@@ -4,23 +4,27 @@ var client = require('./dbConnection');
 
 router.get('/listarpaciente', function(req, res, next) {
     
-    client.query("SELECT idpaciente, nomepaciente FROM paciente WHERE idpaciente NOT IN (SELECT idpaciente FROM agenda) AND aprovado = 1 ORDER BY nomepaciente;", (err, response) => {
+    client.query("SELECT P.idpaciente, P.nomepaciente FROM paciente P INNER JOIN estagiariopacientes ep on ep.idpaciente = P.idpaciente WHERE P.idpaciente NOT IN (SELECT idpaciente FROM agenda) AND aprovado = 1 ORDER BY nomepaciente;", (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
   });
 
-  router.get('/listardia', function(req, res, next) {
-    
-    client.query("SELECT iddiasemana, descricaosemana from diasemana ORDER BY iddiasemana;", (err, response) => {
+  router.post('/listardia', function(req, res) {
+
+    const data = {idpaciente: req.body.paciente};
+    client.query("SELECT ds.iddiasemana, ds.descricaosemana from diasemana ds INNER JOIN agendaprofessor ap on ap.iddiasemana = ds.iddiasemana INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario WHERE ep.idpaciente = $1 ORDER BY iddiasemana;", [data.idpaciente], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
   });
 
-  router.get('/listarhorario', function(req, res, next) {
+  router.post('/listarhorario', function(req, res, next) {
+
+    const data = {idpaciente: req.body.paciente};
+    console.log(data.idpaciente);
     
-    client.query("SELECT idhorainicio, descricaohorainicio from horainicio ORDER BY idhorainicio;", (err, response) => {
+    client.query("SELECT DISTINCT hi.idhorainicio, hi.descricaohorainicio FROM horainicio hi INNER JOIN agendaprofessor ap on ap.idhorainicio = hi.idhorainicio INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario WHERE ep.idpaciente = $1 ORDER BY idhorainicio", [data.idpaciente], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
