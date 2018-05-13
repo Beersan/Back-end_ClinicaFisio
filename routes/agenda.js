@@ -10,6 +10,14 @@ router.get('/listarpaciente', function(req, res, next) {
     });          
   });
 
+  router.post('/listarprofessor', function(req, res, next) {
+    const data = {idpaciente: req.body.paciente};
+    client.query("select ap.idprofessor from agendaprofessor ap INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario WHERE ep.idpaciente = $1",[data.idpaciente], (err, response) => {
+      if (err) throw err;
+      res.send(response.rows);
+    });          
+  });
+
   router.post('/listardia', function(req, res) {
 
     const data = {idpaciente: req.body.paciente};
@@ -21,10 +29,11 @@ router.get('/listarpaciente', function(req, res, next) {
 
   router.post('/listarhorario', function(req, res, next) {
 
-    const data = {idpaciente: req.body.paciente};
+    const data = {idpaciente: req.body.paciente, idprofessor: req.body.professor[0].idprofessor};
     console.log(data.idpaciente);
     
-    client.query("SELECT DISTINCT hi.idhorainicio, hi.descricaohorainicio FROM horainicio hi INNER JOIN agendaprofessor ap on ap.idhorainicio = hi.idhorainicio INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario WHERE ep.idpaciente = $1 ORDER BY idhorainicio", [data.idpaciente], (err, response) => {
+    console.log(data.idprofessor);
+    client.query("select hi.descricaohorainicio from horainicio hi left join horafim hf on hf.descricaohorafim = hi.descricaohorainicio where hi.descricaohorainicio between hi.descricaohorainicio and (select hf.descricaohorafim from horafim hf inner join agendaprofessor ap on ap.idhorafim = hf.idhorafim INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario WHERE ap.idprofessor = $1 order by hi.descricaohorainicio)", [data.idprofessor], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
