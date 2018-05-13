@@ -33,7 +33,7 @@ router.get('/listarpaciente', function(req, res, next) {
     console.log(data.idpaciente);
     
     console.log(data.idprofessor);
-    client.query("select hi.descricaohorainicio from horainicio hi left join horafim hf on hf.descricaohorafim = hi.descricaohorainicio where hi.descricaohorainicio between hi.descricaohorainicio and (select hf.descricaohorafim from horafim hf inner join agendaprofessor ap on ap.idhorafim = hf.idhorafim INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario WHERE ap.idprofessor = $1 order by hi.descricaohorainicio)", [data.idprofessor], (err, response) => {
+    client.query("select hi.descricaohorainicio, hi.idhorainicio  from horainicio hi left join horafim hf on hf.descricaohorafim = hi.descricaohorainicio where hi.descricaohorainicio between hi.descricaohorainicio and (select hf.descricaohorafim from horafim hf inner join agendaprofessor ap on ap.idhorafim = hf.idhorafim INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario WHERE ap.idprofessor = $1 order by hi.descricaohorainicio)", [data.idprofessor], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          

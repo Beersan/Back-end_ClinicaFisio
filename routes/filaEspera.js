@@ -30,7 +30,7 @@ router.get('/listarEstagiariosFila', function(req, res, next) {
                     + "  		INNER JOIN especialidade ESP ON ESP.codigoespecialidade = P.codigoespecialidade "
                     + "     WHERE (SELECT COUNT(EP.idestagiario) "
                     + "               FROM estagiariopacientes EP " 
-                    + "           WHERE EP.idestagiario = E.idestagiario) <= 2 "
+                    + "           WHERE EP.idestagiario = E.idestagiario) <= 2 "                    
                     + "  	  ORDER BY E.nomeestagiario, GR.descricaogrupo" , (err, response) => {
         if (err) throw err;
         res.send(response.rows);
