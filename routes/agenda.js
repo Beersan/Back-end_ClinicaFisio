@@ -69,8 +69,9 @@ router.post('/cadastrar', function(req, res){
     });
    
 });
+//aspodkapsdkpaskdpaksdpaksdpoaksdaspdk
 
-//teste
+
 
 router.get('/listar', function(req, res, next) {
    
