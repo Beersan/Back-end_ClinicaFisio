@@ -29,11 +29,29 @@ router.get('/listarpaciente', function(req, res, next) {
 
   router.post('/listarhorario', function(req, res, next) {
 
-    const data = {idpaciente: req.body.paciente, idprofessor: req.body.professor[0].idprofessor};
-    console.log(data.idpaciente);
     
-    console.log(data.idprofessor);
-    client.query("select hi.descricaohorainicio, hi.idhorainicio  from horainicio hi left join horafim hf on hf.descricaohorafim = hi.descricaohorainicio where hi.descricaohorainicio between hi.descricaohorainicio and (select hf.descricaohorafim from horafim hf inner join agendaprofessor ap on ap.idhorafim = hf.idhorafim INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario WHERE ap.idprofessor = $1 order by hi.descricaohorainicio)", [data.idprofessor], (err, response) => {
+    const data = {idpaciente: req.body.paciente, idprofessor: req.body.professor[0].idprofessor, dia: req.body.dia};
+    console.log(data.dia);
+    
+    client.query("select hi.descricaohorainicio, hi.idhorainicio "
+                  + "from horainicio hi "
+                  + "where hi.descricaohorainicio BETWEEN ("
+                  + "    select hinicio.descricaohorainicio"
+                  + "    from horainicio hinicio"
+                  + "    inner join agendaprofessor ap on ap.idhorainicio = hinicio.idhorainicio "
+                  + "    INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor "
+                  + "    INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario "
+                  + "    WHERE ap.idprofessor = $1"
+                  + "    AND ap.iddiasemana = $2"
+                  + "  ) AND ("
+                  + "    select hf.descricaohorafim "
+                  + "    from horafim hf "
+                  + "    inner join agendaprofessor ap on ap.idhorafim = hf.idhorafim "
+                  + "    INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor "
+                  + "    INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario "
+                  + "    WHERE ap.idprofessor = $3"
+                  + "    AND ap.iddiasemana = $4"
+                  + "  )", [data.idprofessor, data.dia, data.idprofessor, data.dia], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
