@@ -70,7 +70,7 @@ router.post('/cadastrar', function(req, res){
    
 });
 
-
+//teste
 
 router.get('/listar', function(req, res, next) {
    
