@@ -4,7 +4,7 @@ var client = require('./dbConnection');
 
 router.get('/listarpaciente', function(req, res, next) {
     
-    client.query("SELECT P.idpaciente, P.nomepaciente FROM paciente P INNER JOIN estagiariopacientes ep on ep.idpaciente = P.idpaciente WHERE P.idpaciente NOT IN (SELECT idpaciente FROM agenda) AND aprovado = 1 ORDER BY nomepaciente;", (err, response) => {
+    client.query("SELECT  P.idpaciente, P.nomepaciente FROM paciente P INNER JOIN estagiariopacientes ep on ep.idpaciente = P.idpaciente WHERE P.idpaciente NOT IN (SELECT idpaciente FROM agenda) AND aprovado = 1 ORDER BY nomepaciente;", (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
@@ -36,21 +36,21 @@ router.get('/listarpaciente', function(req, res, next) {
     client.query("select hi.descricaohorainicio, hi.idhorainicio "
                   + "from horainicio hi "
                   + "where hi.descricaohorainicio BETWEEN ("
-                  + "    select hinicio.descricaohorainicio"
+                  + "    select DISTINCT hinicio.descricaohorainicio"
                   + "    from horainicio hinicio"
                   + "    inner join agendaprofessor ap on ap.idhorainicio = hinicio.idhorainicio "
                   + "    INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor "
                   + "    INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario "
                   + "    WHERE ap.idprofessor = $1"
-                  + "    AND ap.iddiasemana = $2"
+                  + "    AND ap.iddiasemana = $2 limit 1"
                   + "  ) AND ("
-                  + "    select hf.descricaohorafim "
+                  + "    select DISTINCT hf.descricaohorafim "
                   + "    from horafim hf "
                   + "    inner join agendaprofessor ap on ap.idhorafim = hf.idhorafim "
                   + "    INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor "
                   + "    INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario "
                   + "    WHERE ap.idprofessor = $3"
-                  + "    AND ap.iddiasemana = $4"
+                  + "    AND ap.iddiasemana = $4 limit 1"
                   + "  )", [data.idprofessor, data.dia, data.idprofessor, data.dia], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
@@ -74,7 +74,7 @@ router.post('/cadastrar', function(req, res){
 
 router.get('/listar', function(req, res, next) {
    
-  client.query('SELECT p.nomepaciente, ds.descricaosemana, hi.descricaohorainicio, numerosessoes, datainicio FROM agenda ag INNER JOIN paciente P on p.idpaciente = ag.idpaciente INNER JOIN diasemana ds on ds.iddiasemana = ag.iddiasemana INNER JOIN horainicio hi on hi.idhorainicio = ag.idhorainicio ORDER BY p.nomepaciente', (err, response) => {
+  client.query("SELECT 'assets/imgs/emespera.png' AS status, p.nomepaciente, ds.descricaosemana, hi.descricaohorainicio, numerosessoes, datainicio FROM agenda ag INNER JOIN paciente P on p.idpaciente = ag.idpaciente INNER JOIN diasemana ds on ds.iddiasemana = ag.iddiasemana INNER JOIN horainicio hi on hi.idhorainicio = ag.idhorainicio ORDER BY p.nomepaciente", (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          
