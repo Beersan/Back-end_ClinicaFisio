@@ -15,7 +15,7 @@ router.post('/cadastrar', function(req, res){
   };
   client.query("INSERT INTO PROFESSOR(matriculaProfessor, nomeProfessor, crefitoProfessor, emailProfessor, telefoneProfessor, codigoespecialidade, ativo) values($1, $2, $3, $4, $5, $6, 1)", [data.matricula, data.nome, data.crefito, data.email, data.telefone, data.especialidade]);         
   res.send({
-    message: 'ok'
+    message: 'ok '
   });
 
 });
