@@ -69,6 +69,19 @@ router.get('/listarestagiario', function(req, res, next) {
     });  
   });
 
+  router.post('/cadastrarnovoestagio', function(req, res){ 
+    
+    const data = {grupo: req.body.grupo, codigos: req.body.codigo, estagio: req.body.estagio};
+    //client.query("DELETE FROM grupoestagiarios WHERE idgrupo = $1", [data.grupo]);   
+    console.log(data.codigos)      
+    /*for (i = 0; i <= data.codigos.length; i++){
+      client.query("INSERT INTO grupoestagiarios(idestagiario, idgrupo, idestagio) values($1, $2, $3)", [data.codigos[i], data.grupo, data.estagio]);         
+    }*/
+    res.send({
+      message: 'ok'
+    });  
+  });
+
   router.get('/listargrupoestagiario', function(req, res, next) {
       
     client.query("SELECT G.idgrupo, est.idestagio, G.descricaogrupo, est.descricaoestagio, string_agg(E.nomeestagiario, ', ') as nomes FROM grupoestagiarios GE INNER JOIN estagiario E ON E.idestagiario = GE.idestagiario INNER JOIN grupo G ON G.idgrupo = GE.idgrupo INNER JOIN estagio est on est.idestagio = GE.idestagio GROUP BY G.idgrupo, est.idestagio", (err, response) => {
