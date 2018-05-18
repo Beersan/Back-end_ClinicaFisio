@@ -47,8 +47,8 @@ router.post('/editar', function(req, res){
     nome: req.body.nomeProfessor,
     matricula: req.body.matriculaProfessor, 
     crefito: req.body.crefitoProfessor, 
-    email: req.body.emailProfessor, //5
-    telefone: req.body.telefone, //6
+    email: req.body.emailProfessor,
+    telefone: req.body.telefone,
     especialidade: req.body.especialidade
   };
   client.query("update PROFESSOR set nomeProfessor = ($1), matriculaProfessor = ($2), telefoneProfessor = ($3), crefitoProfessor = ($4), emailProfessor = ($5), codigoEspecialidade = ($6) where idprofessor = ($7)", [data.nome, data.matricula, data.telefone, data.crefito, data.email, data.especialidade, data.idprofessor]);         
