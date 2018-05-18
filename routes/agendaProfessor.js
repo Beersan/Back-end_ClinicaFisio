@@ -27,7 +27,6 @@ router.get('/listarHoraFim', function (req, res){
 });
 
 router.post('/inserirAgenda', function (req, res){
-    //console.log(req.body);
     const data = {
         nomeProfessor : req.body.idprofessor,
         descricaoDiaSemana : req.body.diaSemana,
