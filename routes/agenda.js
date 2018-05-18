@@ -27,7 +27,7 @@ router.get('/listarpaciente', function(req, res, next) {
     });          
   });
 
-  //asdasdas
+  
 
   router.post('/listarhorario', function(req, res, next) {
 

@@ -18,7 +18,27 @@ router.get('/listarestagiario', function(req, res, next) {
     });          
   });
 
-  router.post('/listarprofessor', function(req, res, next) {
+  router.get('/listarestagio', function(req, res, next) {
+    
+    client.query('SELECT * from estagio order by descricaoestagio;', (err, response) => {
+      if (err) throw err;
+      res.send(response.rows);
+    });          
+  });
+
+  router.post('/alterarestagio', function(req, res, next) {
+    
+    const data = {idgrupo: req.body.idgrupo};
+    console.log(data.idgrupo);
+    client.query('SELECT * from estagio es where idestagio not in (select idestagio from grupoestagiarios where idgrupo = $1 group by idestagio)  order by es.descricaoestagio',[data.idgrupo], (err, response) => {
+      if (err) throw err;
+      res.send(response.rows);
+    });          
+  });
+
+
+
+  /*router.post('/listarprofessor', function(req, res, next) {
     var query;
     var data = {idprofessor: req.body.professor};
     console.log(req.body);
@@ -34,16 +54,29 @@ router.get('/listarestagiario', function(req, res, next) {
         res.send(response.rows);
       });
     }
-  });
+  });*/
 
   router.post('/cadastrar', function(req, res){ 
     
-    const data = {grupo: req.body.grupo, codigos: req.body.codigos, professor: req.body.professor};
+    const data = {grupo: req.body.grupo, codigos: req.body.codigos, estagio: req.body.estagio};
    
     client.query("DELETE FROM grupoestagiarios WHERE idgrupo = $1", [data.grupo]);         
     for (i = 0; i <= data.codigos.length; i++){
-      client.query("INSERT INTO grupoestagiarios(idestagiario, idgrupo, idprofessor) values($1, $2, $3)", [data.codigos[i], data.grupo, data.professor]);         
+      client.query("INSERT INTO grupoestagiarios(idestagiario, idgrupo, idestagio) values($1, $2, $3)", [data.codigos[i], data.grupo, data.estagio]);         
     }
+    res.send({
+      message: 'ok'
+    });  
+  });
+
+  router.post('/cadastrarnovoestagio', function(req, res){ 
+    
+    const data = {grupo: req.body.grupo, codigos: req.body.codigo, estagio: req.body.estagio};
+    //client.query("DELETE FROM grupoestagiarios WHERE idgrupo = $1", [data.grupo]);   
+    console.log(data.codigos)      
+    /*for (i = 0; i <= data.codigos.length; i++){
+      client.query("INSERT INTO grupoestagiarios(idestagiario, idgrupo, idestagio) values($1, $2, $3)", [data.codigos[i], data.grupo, data.estagio]);         
+    }*/
     res.send({
       message: 'ok'
     });  
@@ -51,7 +84,7 @@ router.get('/listarestagiario', function(req, res, next) {
 
   router.get('/listargrupoestagiario', function(req, res, next) {
       
-    client.query("SELECT G.idgrupo, P.idprofessor, G.descricaogrupo, P.nomeprofessor, string_agg(E.nomeestagiario, ', ') as nomes FROM grupoestagiarios GE INNER JOIN estagiario E ON E.idestagiario = GE.idestagiario INNER JOIN grupo G ON G.idgrupo = GE.idgrupo INNER JOIN professor P on P.idprofessor = GE.idprofessor GROUP BY G.idgrupo, P.idprofessor", (err, response) => {
+    client.query("SELECT G.idgrupo, est.idestagio, G.descricaogrupo, est.descricaoestagio, string_agg(E.nomeestagiario, ', ') as nomes FROM grupoestagiarios GE INNER JOIN estagiario E ON E.idestagiario = GE.idestagiario INNER JOIN grupo G ON G.idgrupo = GE.idgrupo INNER JOIN estagio est on est.idestagio = GE.idestagio GROUP BY G.idgrupo, est.idestagio", (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
