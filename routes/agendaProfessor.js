@@ -27,20 +27,20 @@ router.get('/listarHoraFim', function (req, res){
 });
 
 router.post('/inserirAgenda', function (req, res){
-    console.log(req.body);
+    //console.log(req.body);
     const data = {
-        nomeProfessor : req.body.professor,
+        nomeProfessor : req.body.idprofessor,
         descricaoDiaSemana : req.body.diaSemana,
-        descricaoHoraInicio : req.body.horainicio,
-        descricaoHoraFim : req.body.horafim
+        descricaoHoraInicio : req.body.horaInicio,
+        descricaoHoraFim : req.body.horaFim
     };
-    //console.log("valores " + professor, diaSemana, horainicio, horafim)
+    console.log("valores " + data.nomeProfessor, data.descricaoDiaSemana, data.descricaoHoraInicio, data.descricaoHoraFim)
         client.query("insert into agendaprofessor (idprofessor, iddiasemana, idhorainicio, idhorafim) values (" + 
         "(select idprofessor from professor where nomeprofessor = ($1) and ativo = 1), " +
         "(select iddiasemana from diasemana where descricaosemana = ($2)), " +
         "(select idhorainicio from horainicio where descricaohorainicio = ($3)), " +
         "(select idhorafim from horafim where descricaohorafim = ($4)))"
-        , [data.nomeProfessor, data.descricaoDiaSemana, data.descricaoHoraIniciohorainicio, data.descricaoHoraFim]);       
+        , [data.nomeProfessor, data.descricaoDiaSemana, data.descricaoHoraInicio, data.descricaoHoraFim]);       
         res.send({
         message: 'ok'
     });
