@@ -85,9 +85,25 @@ router.get('/listarEstagio', function(req, res, next) {
   });          
 });
 
-
-
-
+router.post('/agenda', function(req, res){
+    const data = {
+      idProfessor: req.body.idProfessor
+    };
+    client.query(
+      'select professor.nomeprofessor, diasemana.descricaosemana, horainicio.descricaohorainicio, horafim.descricaohorafim from '+
+      'professor, diasemana, horainicio, horafim, agendaprofessor ' +
+      'where ' +
+      'agendaprofessor.idprofessor = professor.idprofessor and ' +
+      'agendaprofessor.idhorainicio = horainicio.idhorainicio and ' +
+      'agendaprofessor.idhorafim = horafim.idhorafim and ' +
+      'agendaprofessor.iddiasemana = diasemana.iddiasemana and '+
+      'agendaprofessor.idprofessor = $1'
+      ,[data.idProfessor], (err, response) => {
+        if (err) throw err;
+        res.send(response.rows);
+      });          
+    });
+  
 module.exports = router;
 
 

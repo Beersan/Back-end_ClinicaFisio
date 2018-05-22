@@ -30,17 +30,14 @@ router.get('/listarHoraFim', function (req, res){
     });          
 });
 
-router.post('/inserirAgenda', function (req, res){
+router.post('/inserirAgenda', function (req, res, next){
     const data = {
         idprofessor : req.body.idprofessor,
         descricaoDiaSemana : req.body.diaSemana,
         descricaoHoraInicio : req.body.horaInicio,
         descricaoHoraFim : req.body.horaFim
     };
-    //console.log(data.descricaoDiaSemana[1]);
-    //console.log("tamanho = " + data.descricaoDiaSemana.length);
-
-    for(i = 0; i <= data.descricaoDiaSemana.length; i++){
+    for(i = 0; i <= data.descricaoDiaSemana.length -1; i++){
 
         if(data.descricaoDiaSemana[i] == 'Segunda-Feira'){
             diaSemanaString = 1;
@@ -53,17 +50,14 @@ router.post('/inserirAgenda', function (req, res){
         }else if(data.descricaoDiaSemana[i] == 'Sexta-Feira'){
             diaSemanaString = 5;
         }
-
-            console.log(data.descricaoDiaSemana[i]);
-            console.log(data.descricaoDiaSemana.length);
-
         client.query("insert into agendaprofessor (idprofessor, iddiasemana, idhorainicio, idhorafim) values ($1, $2," + 
             "(select idhorainicio from horainicio where descricaohorainicio = ($3)), " +
             "(select idhorafim from horafim where descricaohorafim = ($4)))"
             ,[data.idprofessor, diaSemanaString, data.descricaoHoraInicio[i], data.descricaoHoraFim[i]]);
-        res.send({
-            message: 'ok'
-        });   
     }
+    res.send({
+        message: 'ok'
+    });
 });
+
 module.exports = router;
