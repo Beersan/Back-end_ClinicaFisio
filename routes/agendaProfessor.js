@@ -46,27 +46,33 @@ router.post('/inserirAgenda', function (req, res, next){
     };
     for(i = 0; i <= data.descricaoDiaSemana.length -1; i++){
 
-        /*if(data.descricaoDiaSemana[i] == 'Segunda-Feira'){
-            diaSemanaString = 1;
-        }else if(data.descricaoDiaSemana[i] == 'Terça-Feira'){
-            diaSemanaString = 2;
-        }else if(data.descricaoDiaSemana[i] == 'Quarta-Feira'){
-            diaSemanaString = 3;
-        }else if(data.descricaoDiaSemana[i] == 'Quinta-Feira'){
-            diaSemanaString = 4;
-        }else if(data.descricaoDiaSemana[i] == 'Sexta-Feira'){
-            diaSemanaString = 5;
-        }*/
         client.query("insert into agendaprofessor (idprofessor, iddiasemana, idperiodo, idhorainicio, idhorafim) values ($1, " + 
             "(select iddiasemana from diasemana where descricaosemana = ($2))," +
             "(select idperiodo from periodo where descricaoperiodo = ($3))," +
             "(select idhorainicio from horainicio where descricaohorainicio = ($4)), " +
             "(select idhorafim from horafim where descricaohorafim = ($5)))"
-            ,[data.idprofessor, /*diaSemanaString*/data.descricaoDiaSemana[i], data.descperiodo[i], data.descricaoHoraInicio[i], data.descricaoHoraFim[i]]);
+            ,[data.idprofessor, data.descricaoDiaSemana[i], data.descperiodo[i], data.descricaoHoraInicio[i], data.descricaoHoraFim[i]]);
     }
     res.send({
         message: 'ok'
     });
 });
+router.post('/listarAgenda', function (req, res, next){
+    const data ={
+        idprofessor: req.body.idprofessor
+    }
+    client.query('select idagendaprofessor, professor.nomeprofessor, diasemana.descricaosemana, horainicio.descricaohorainicio, horafim.descricaohorafim, periodo.descricaoperiodo ' + 
+        'from agendaprofessor, professor, diasemana, horainicio, horafim, periodo ' + 
+        'where ' +
+        'agendaprofessor.idprofessor = professor.idprofessor and ' + 
+        'agendaprofessor.iddiasemana = diasemana.iddiasemana and ' +
+        'agendaprofessor.idhorainicio = horainicio.idhorainicio and ' +
+        'agendaprofessor.idhorafim = horafim.idhorafim and ' +
+        'agendaprofessor.idperiodo = periodo.idperiodo and ' +
+        'professor.idprofessor  = ($1)', [data.idprofessor], 
+        (err, response) => {if (err) throw err;
+            res.send(response.rows);
+        });          
+    });
 
 module.exports = router;
