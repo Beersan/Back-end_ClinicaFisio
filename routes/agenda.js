@@ -12,7 +12,12 @@ router.get('/listarpaciente', function(req, res, next) {
 
   router.post('/listarprofessor', function(req, res, next) {
     const data = {idpaciente: req.body.paciente};
-    client.query("select ap.idprofessor from agendaprofessor ap INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario WHERE ep.idpaciente = $1",[data.idpaciente], (err, response) => {
+    client.query(" SELECT ap.idprofessor FROM agendaprofessor ap "                  
+                  + " INNER JOIN professor p on p.idprofessor = ap.idprofessor "                
+                  + " INNER JOIN grupoestagiarios ge on ge.idestagio = p.idestagio "
+                  + " INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario "
+                  + " WHERE ep.idpaciente = $1 "
+                  + " AND ge.ativo = 1 ",[data.idpaciente], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
@@ -21,7 +26,15 @@ router.get('/listarpaciente', function(req, res, next) {
   router.post('/listardia', function(req, res) {
 
     const data = {idpaciente: req.body.paciente};
-    client.query("SELECT ds.iddiasemana, ds.descricaosemana from diasemana ds INNER JOIN agendaprofessor ap on ap.iddiasemana = ds.iddiasemana INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario WHERE ep.idpaciente = $1 ORDER BY iddiasemana;", [data.idpaciente], (err, response) => {
+    client.query(" SELECT distinct ds.iddiasemana, ds.descricaosemana "
+                + "   from diasemana ds "
+                + " INNER JOIN agendaprofessor ap on ap.iddiasemana = ds.iddiasemana "
+                + " INNER JOIN professor p on p.idprofessor = ap.idprofessor "                
+                + " INNER JOIN grupoestagiarios ge on ge.idestagio = p.idestagio "
+                + " INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario "
+                + " WHERE ep.idpaciente = $1 "
+                + " AND ge.ativo = 1 "
+                + " ORDER BY iddiasemana;", [data.idpaciente], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          
@@ -41,19 +54,25 @@ router.get('/listarpaciente', function(req, res, next) {
                   + "    select DISTINCT hinicio.descricaohorainicio"
                   + "    from horainicio hinicio"
                   + "    inner join agendaprofessor ap on ap.idhorainicio = hinicio.idhorainicio "
-                  + "    INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor "
+                  + "    INNER JOIN professor p on p.idprofessor = ap.idprofessor "                
+                  + "    INNER JOIN grupoestagiarios ge on ge.idestagio = p.idestagio "
                   + "    INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario "
                   + "    WHERE ap.idprofessor = $1"
-                  + "    AND ap.iddiasemana = $2 limit 1"
+                  + "    AND ap.iddiasemana = $2 "
+                  + "    AND ge.ativo = 1 "
+                  + "    LIMIT 1"
                   + "  ) AND ("
                   + "    select DISTINCT hf.descricaohorafim "
                   + "    from horafim hf "
                   + "    inner join agendaprofessor ap on ap.idhorafim = hf.idhorafim "
-                  + "    INNER JOIN grupoestagiarios ge on ge.idprofessor = ap.idprofessor "
+                  + "    INNER JOIN professor p on p.idprofessor = ap.idprofessor "                
+                  + "    INNER JOIN grupoestagiarios ge on ge.idestagio = p.idestagio "
                   + "    INNER JOIN estagiariopacientes ep on ep.idestagiario = ge.idestagiario "
                   + "    WHERE ap.idprofessor = $3"
-                  + "    AND ap.iddiasemana = $4 limit 1"
-                  + "  )", [data.idprofessor, data.dia, data.idprofessor, data.dia], (err, response) => {
+                  + "    AND ap.iddiasemana = $4 "
+                  + "    AND ge.ativo = 1 "
+                  + "    LIMIT 1 "                  
+                  + "  ) ORDER BY hi.descricaohorainicio", [data.idprofessor, data.dia, data.idprofessor, data.dia], (err, response) => {
       if (err) throw err;
       res.send(response.rows);
     });          

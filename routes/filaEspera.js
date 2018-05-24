@@ -36,11 +36,14 @@ router.get('/listarEstagiariosFila', function(req, res, next) {
                     + " FROM grupoestagiarios GE "
                     + "  		INNER JOIN estagiario E ON E.idestagiario = GE.idestagiario "
                     + "  		INNER JOIN grupo GR ON GR.idgrupo = GE.idgrupo "
-                    + "  		INNER JOIN professor P ON P.idprofessor = GE.idprofessor "
+                    + "     INNER JOIN estagio EST ON EST.idestagio = GE.idestagio "
+                    + "  		INNER JOIN professor P ON P.idestagio = GE.idestagio "
                     + "  		INNER JOIN especialidade ESP ON ESP.codigoespecialidade = P.codigoespecialidade "
                     + "     WHERE (SELECT COUNT(EP.idestagiario) "
                     + "               FROM estagiariopacientes EP " 
                     + "           WHERE EP.idestagiario = E.idestagiario) <= 2 "                    
+                    + "     AND GE.ativo = 1 "
+                    + "     AND GE.idestagio = 1 "
                     + "  	  ORDER BY E.nomeestagiario, GR.descricaogrupo" , (err, response) => {
         if (err) throw err;
         res.send(response.rows);
@@ -54,6 +57,13 @@ router.post('/gravarAnexosPaciente', function(req, res){
   for (i = 0; i <= data.anexos.length; i++){
     client.query("INSERT INTO pacientearquivos(idpaciente,arquivo) values($1, $2)", [data.idpaciente, data.anexos[i]]);         
   }       
+  res.send({message: 'ok'});   
+});
+
+router.post('/vincularPacienteEstagiario', function(req, res){   
+  const data = {idestagiario: req.body.idestagiario, idpaciente: req.body.idpaciente};
+   
+  client.query("INSERT INTO estagiariopacientes (idestagiario,idpaciente) VALUES ($1, $2)", [data.idestagiario,data.idpaciente]);
   res.send({message: 'ok'});   
 });
 
