@@ -66,14 +66,28 @@ router.post('/listarhorario', function(req, res) {
 });
 
 router.post('/cadastrar', function(req, res){ 
+  var idagenda;
+  const data = {
+    idpaciente: req.body.paciente, 
+    idprofessor: req.body.professor, 
+    iddiasemana: req.body.dia, 
+    idhorainicio: req.body.horario, 
+    numerosessoes: req.body.numeroSessoes, 
+    datainicio: req.body.dataInicioAtendimento
+  };
   
-  const data = {idpaciente: req.body.paciente, iddiasemana: req.body.dia, idhorainicio: req.body.horario, numerosessoes: req.body.numeroSessoes, datainicio: req.body.dataInicioAtendimento};
-  
-  client.query("INSERT INTO agenda (idpaciente, iddiasemana, idhorainicio, numerosessoes, datainicio) values($1, $2, $3, $4, $5) RETURNING codigo", [data.idpaciente, data.iddiasemana, data.idhorainicio, data.numerosessoes, data.datainicio],(err, response) => {
+  client.query("INSERT INTO agenda (idpaciente, iddiasemana, idhorainicio, numerosessoes, datainicio, idprofessor) values($1, $2, $3, $4, $5, $6) RETURNING idagenda", [data.idpaciente, data.iddiasemana, data.idhorainicio, data.numerosessoes, data.datainicio, data.idprofessor],(err, response) => {
     if (err) throw err;
-    console.log(response.rows);
-  });    
-  res.send({message: 'ok'});
+    console.log(data.datainicio);    
+    idagenda = response.rows[0].idagenda;    
+    var dataInicio = new Date(data.datainicio);  
+    for (i = 0; i < data.numerosessoes; i++){
+      console.log(dataInicio);
+      client.query("INSERT INTO gerenciaratendimento(idagenda, datasessao) values($1, $2)", [idagenda, dataInicio.toISOString().slice(0, 10)]);         
+      dataInicio.setDate(dataInicio.getDate() + 7);
+    }
+  });
+  res.send({message: 'ok'});  
 });
 
 //tamo testando
