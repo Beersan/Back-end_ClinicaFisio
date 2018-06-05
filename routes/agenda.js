@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var client = require('./dbConnection');
+var nodemailer = require('nodemailer');
 
 router.get('/listarpaciente', function(req, res, next) {    
   client.query("SELECT  P.idpaciente, P.nomepaciente"
@@ -13,6 +14,20 @@ router.get('/listarpaciente', function(req, res, next) {
     res.send(response.rows);
   });          
 });
+
+router.post('/buscarsessoes', function(req, res) {  
+  const data = {idagenda: req.body.idagenda};
+  
+  client.query(" SELECT GA.idgerenciaratendimento, GA.idagenda, GA.datasessao, GA.assinatura, GA.evolucaodiaria,"
+                + "   CASE GA.presenca WHEN 1 THEN 'true' ELSE 'false' END AS presente "
+                + "   FROM gerenciaratendimento GA "                
+                + "   WHERE GA.idagenda = $1 "
+                + "   ORDER BY GA.datasessao ", [data.idagenda], (err, response) => {
+    if (err) throw err;
+    res.send(response.rows);
+  });
+});
+
 
 router.post('/listarprofessor', function(req, res) {
   const data = {idpaciente: req.body.paciente};
@@ -76,7 +91,7 @@ router.post('/cadastrar', function(req, res){
     datainicio: req.body.dataInicioAtendimento
   };
   
-  client.query("INSERT INTO agenda (idpaciente, iddiasemana, idhorainicio, numerosessoes, datainicio, idprofessor) values($1, $2, $3, $4, $5, $6) RETURNING idagenda", [data.idpaciente, data.iddiasemana, data.idhorainicio, data.numerosessoes, data.datainicio, data.idprofessor],(err, response) => {
+  client.query("INSERT INTO agenda (idpaciente, iddiasemana, idhorainicio, numerosessoes, datainicio, idprofessor, idstatus) values($1, $2, $3, $4, $5, $6, 1) RETURNING idagenda", [data.idpaciente, data.iddiasemana, data.idhorainicio, data.numerosessoes, data.datainicio, data.idprofessor],(err, response) => {
     if (err) throw err;
     console.log(data.datainicio);    
     idagenda = response.rows[0].idagenda;    
@@ -90,40 +105,135 @@ router.post('/cadastrar', function(req, res){
   res.send({message: 'ok'});  
 });
 
-//tamo testando
+router.post('/gravarAssinatura', function(req, res){   
+  const data = {
+    assinatura: req.body.assinatura, 
+    idgerenciaratendimento: req.body.idgerenciaratendimento
+  };
+  
+  client.query(" UPDATE gerenciaratendimento SET assinatura = $1, presenca = 1 "
+              +" WHERE idgerenciaratendimento = $2 ", [data.assinatura, data.idgerenciaratendimento], (err, response) => {
+    if (err) throw err;
+    res.send({message: 'ok'});
+  });
+});
 
-router.get('/listar', function(req, res, next) {
-   
-  client.query("SELECT 'assets/imgs/emespera.png' AS status, p.nomepaciente, ds.descricaosemana, hi.descricaohorainicio, numerosessoes, datainicio FROM agenda ag INNER JOIN paciente P on p.idpaciente = ag.idpaciente INNER JOIN diasemana ds on ds.iddiasemana = ag.iddiasemana INNER JOIN horainicio hi on hi.idhorainicio = ag.idhorainicio ORDER BY p.nomepaciente", (err, response) => {
+router.post('/gravarEvolucao', function(req, res){   
+  const data = {
+    evolucaodiaria: req.body.evolucaodiaria, 
+    idgerenciaratendimento: req.body.idgerenciaratendimento
+  };
+  
+  client.query(" UPDATE gerenciaratendimento SET evolucaodiaria = $1 "
+              +" WHERE idgerenciaratendimento = $2 ", [data.evolucaodiaria, data.idgerenciaratendimento], (err, response) => {
+    if (err) throw err;
+    res.send({message: 'ok'});
+  });
+});
+
+router.post('/gravarStatus', function(req, res){   
+  const data = {
+    status: req.body.status, 
+    idagenda: req.body.idagenda
+  };
+  
+  client.query(" UPDATE agenda SET idstatus = $1 "
+              +" WHERE idagenda = $2 ", [data.status, data.idagenda], (err, response) => {
+    if (err) throw err;
+    res.send({message: 'ok'});
+  });
+});
+
+router.get('/listar', function(req, res, next) {   
+  client.query("SELECT p.nomepaciente, ds.descricaosemana, "
+              + " CASE ag.idstatus "
+              + "   WHEN 1 THEN 'assets/imgs/emespera.png'" 
+              + "   WHEN 2 THEN 'assets/imgs/emandamento.png'" 
+              + "   WHEN 3 THEN 'assets/imgs/finalizado.png'" 
+              + "   WHEN 4 THEN 'assets/imgs/cancelado.png'"
+              + " END "
+              + " AS status,"
+              + " CASE ag.idstatus "
+              + "   WHEN 1 THEN 'Em espera'" 
+              + "   WHEN 2 THEN 'Em andamento'" 
+              + "   WHEN 3 THEN 'Finalizado'" 
+              + "   WHEN 4 THEN 'Encerrado'"
+              + " END "
+              + " AS tituloStatus,"
+              + " hi.descricaohorainicio, ag.numerosessoes, ag.datainicio, "
+              + " ag.idagenda, ag.idstatus, ES.nomeestagiario, P.idpaciente, "
+              + " (SELECT DISTINCT 1 FROM pacientearquivos PAR WHERE PAR.idpaciente = P.idpaciente ) AS exames "
+              + " FROM agenda ag "
+              + " INNER JOIN paciente P on P.idpaciente = ag.idpaciente "
+              + " INNER JOIN estagiariopacientes EP on EP.idpaciente = p.idpaciente "
+              + " INNER JOIN estagiario ES on ES.idestagiario = EP.idestagiario "
+              + " INNER JOIN diasemana ds on ds.iddiasemana = ag.iddiasemana "
+              + " INNER JOIN horainicio hi on hi.idhorainicio = ag.idhorainicio "
+              + " ORDER BY ag.datainicio ", (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          
 });
-  /*
 
-router.post('/excluir', function(req, res){ 
-  
-  const data = {idEstagiario: req.body.idEstagiario};
-  
-  client.query("DELETE FROM estagiario WHERE idestagiario = $1", [data.idEstagiario], (err, response) => {
-    var msg = "ok";
-    if(err != null){  
-      msg = "erro";
-    }
+router.post('/excluir', function(req, res){   
+  const data = {idagenda: req.body.idagenda};
+  client.query(" DELETE FROM gerenciaratendimento WHERE idagenda = $1;", [data.idagenda], (err, response) => {    
+    if (err) throw err;    
+  });          
+  client.query(" DELETE FROM agenda WHERE idagenda = $1 ", [data.idagenda], (err, response) => {    
+    if (err) throw err;
     res.send({
-      message: msg
+      message: "ok"
     });
   });         
 });
 
-router.post('/editar', function(req, res){ 
-  
-  const data = {nome: req.body.nomeEstagiario, matricula: req.body.numeroMatricula, email: req.body.email, telefone: req.body.telefone, idEstagiario: req.body.idEstagiario};
-  
-  client.query("update estagiario set nomeestagiario = ($1), matriculaestagiario = ($2), emailestagiario = ($3), telefoneestagiario = ($4) where idestagiario = ($5)", [data.nome, data.matricula, data.email, data.telefone, data.idEstagiario]);         
-  res.send({
-    message: 'ok'
-  });  
-});*/
+
+router.post('/enviarExamesPaciente', function(req, res){
+  var arquivos, mensagem;
+  const data = {idpaciente: req.body.idpaciente};
+  client.query("SELECT string_agg(PA.arquivo, ' \n\n ') AS arquivos, ES.emailestagiario, P.nomepaciente   "
+              + " FROM pacientearquivos PA "
+              + " INNER JOIN estagiariopacientes EP on EP.idpaciente = PA.idpaciente "
+              + " INNER JOIN estagiario ES on ES.idestagiario = EP.idestagiario "
+              + " INNER JOIN paciente P on P.idpaciente = EP.idpaciente "
+              + " WHERE  P.idpaciente = $1 "
+              + " AND  PA.arquivo IS NOT NULL "
+              + " GROUP BY  ES.emailestagiario, P.nomepaciente ",[data.idpaciente], (err, response) => {
+    if (err) throw err;
+    
+    arquivos = response.rows[0].arquivos; 
+    if (arquivos != null && arquivos != ''){      
+      var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'no.reply.fisio@gmail.com',
+          pass: 'fisiofisio'
+        },
+        tls: { rejectUnauthorized: false }
+      });
+      
+      var mailOptions = {
+        from: 'no.reply.fisio@gmail.com',
+        //e-mail da muié / das molieres..
+        to: response.rows[0].emailestagiario,
+        subject: "CLÍNICA FISIOTERAPIA - Exames paciente " + response.rows[0].nomepaciente ,
+        text: arquivos
+      };
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email enviado: ' + info.response);
+        }
+      });
+      mensagem = "enviado";
+    } else {
+      mensagem = "semArquivo";
+    }
+    res.send({message: mensagem});
+  });    
+});
 
 module.exports = router;
