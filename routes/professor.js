@@ -14,18 +14,16 @@ router.post('/cadastrar', function(req, res){
     especialidade: req.body.especialidade,
     estagio: req.body.estagio,
   };
-  console.log(req.body);
-  client.query("INSERT INTO PROFESSOR(matriculaProfessor, nomeProfessor, crefitoProfessor, emailProfessor, telefoneProfessor, codigoespecialidade, ativo, idestagio) values($1, $2, $3, $4, $5, $6, 1, $7)", [data.matricula, data.nome, data.crefito, data.email, data.telefone, data.especialidade, data.estagio]);         
+  client.query("INSERT INTO PROFESSOR(matriculaProfessor, nomeProfessor, crefitoProfessor, emailProfessor, telefoneProfessor, codigoespecialidade, ativo, idestagio, idsemestre) values ($1, $2, $3, $4, $5, $6, 1, $7, (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1))", [data.matricula, data.nome, data.crefito, data.email, data.telefone, data.especialidade, data.estagio]);         
   res.send({
-    message: 'ok '
+    message: 'ok'
   });
-
 });
 
 //Listar Professor
 
 router.get('/listar', function(req, res, next) { 
-  client.query('select idprofessor, matriculaprofessor, nomeprofessor, crefitoprofessor, emailprofessor, telefoneprofessor, descricaoestagio, descricaoespecialidade, professor.codigoespecialidade, professor.idestagio from professor, especialidade, estagio where professor.codigoespecialidade = especialidade.codigoespecialidade and professor.idestagio = estagio.idestagio and ativo = 1 order by nomeprofessor', (err, response) => {
+  client.query('select idprofessor, matriculaprofessor, nomeprofessor, crefitoprofessor, emailprofessor, telefoneprofessor, descricaoestagio, descricaoespecialidade, professor.codigoespecialidade, professor.idestagio from professor, especialidade, estagio where professor.codigoespecialidade = especialidade.codigoespecialidade and professor.idestagio = estagio.idestagio and ativo = 1 AND professor.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) order by nomeprofessor', (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          

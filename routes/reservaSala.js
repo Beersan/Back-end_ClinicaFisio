@@ -5,7 +5,7 @@ var client = require('./dbConnection');
 router.post('/cadastrar', function(req, res){ 
   var data = {solicitante: req.body.solicitante, salaReserva: req.body.salaReserva, dataReserva: req.body.dataReserva};
   
-  client.query("INSERT INTO reservasala(solicitante, salareserva, datareserva) values($1, $2, $3)", [data.solicitante, data.salaReserva, data.dataReserva], (err, response) => {
+  client.query("INSERT INTO reservasala(solicitante, salareserva, datareserva, idsemestre) values($1, $2, $3, (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1))", [data.solicitante, data.salaReserva, data.dataReserva], (err, response) => {
     res.send({message: 'ok'});
   });   
 });
@@ -21,7 +21,7 @@ router.post('/listarDataReserva', function(req, res, next) {
 });
 
 router.get('/listar', function(req, res, next) { 
-  client.query('SELECT * from reservasala order by datareserva DESC;', (err, response) => {
+  client.query('SELECT * from reservasala where reservasala.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) order by datareserva DESC;', (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          

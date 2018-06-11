@@ -9,6 +9,7 @@ router.get('/listarpaciente', function(req, res, next) {
                 + " INNER JOIN estagiariopacientes ep on ep.idpaciente = P.idpaciente  "
                 + " WHERE P.idpaciente NOT IN (SELECT idpaciente FROM agenda LIMIT 1)  "
                 + " AND aprovado = 1 "
+                + " AND P.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) "
                 + " ORDER BY nomepaciente;", (err, response) => {
     if (err) throw err;
     res.send(response.rows);
@@ -37,6 +38,7 @@ router.post('/listarprofessor', function(req, res) {
                 + " INNER JOIN estagiariopacientes EP on EP.idestagiario = GE.idestagiario "
                 + " WHERE EP.idpaciente = $1 "
                 + " AND GE.ativo = 1 "
+                + " AND P.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) "
                 + " AND P.ativo = 1 ",[data.idpaciente], (err, response) => {
     if (err) throw err;
     res.send(response.rows);
@@ -91,13 +93,11 @@ router.post('/cadastrar', function(req, res){
     datainicio: req.body.dataInicioAtendimento
   };
   
-  client.query("INSERT INTO agenda (idpaciente, iddiasemana, idhorainicio, numerosessoes, datainicio, idprofessor, idstatus) values($1, $2, $3, $4, $5, $6, 1) RETURNING idagenda", [data.idpaciente, data.iddiasemana, data.idhorainicio, data.numerosessoes, data.datainicio, data.idprofessor],(err, response) => {
+  client.query("INSERT INTO agenda (idpaciente, iddiasemana, idhorainicio, numerosessoes, datainicio, idprofessor, idstatus, idsemestre) values($1, $2, $3, $4, $5, $6, 1,(SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1)) RETURNING idagenda", [data.idpaciente, data.iddiasemana, data.idhorainicio, data.numerosessoes, data.datainicio, data.idprofessor],(err, response) => {
     if (err) throw err;
-    console.log(data.datainicio);    
     idagenda = response.rows[0].idagenda;    
     var dataInicio = new Date(data.datainicio);  
     for (i = 0; i < data.numerosessoes; i++){
-      console.log(dataInicio);
       client.query("INSERT INTO gerenciaratendimento(idagenda, datasessao) values($1, $2)", [idagenda, dataInicio.toISOString().slice(0, 10)]);         
       dataInicio.setDate(dataInicio.getDate() + 7);
     }
@@ -109,8 +109,7 @@ router.post('/gravarAssinatura', function(req, res){
   const data = {
     assinatura: req.body.assinatura, 
     idgerenciaratendimento: req.body.idgerenciaratendimento
-  };
-  
+  };  
   client.query(" UPDATE gerenciaratendimento SET assinatura = $1, presenca = 1 "
               +" WHERE idgerenciaratendimento = $2 ", [data.assinatura, data.idgerenciaratendimento], (err, response) => {
     if (err) throw err;
@@ -169,6 +168,7 @@ router.get('/listar', function(req, res, next) {
               + " INNER JOIN estagiario ES on ES.idestagiario = EP.idestagiario "
               + " INNER JOIN diasemana ds on ds.iddiasemana = ag.iddiasemana "
               + " INNER JOIN horainicio hi on hi.idhorainicio = ag.idhorainicio "
+              + " AND ag.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) "
               + " ORDER BY ag.datainicio ", (err, response) => {
     if (err) throw err;
     res.send(response.rows);
@@ -190,20 +190,28 @@ router.post('/excluir', function(req, res){
 
 
 router.post('/enviarExamesPaciente', function(req, res){
-  var arquivos, mensagem;
+  var arquivos, mensagem, texto;
   const data = {idpaciente: req.body.idpaciente};
-  client.query("SELECT string_agg(PA.arquivo, ' \n\n ') AS arquivos, ES.emailestagiario, P.nomepaciente   "
+  client.query(" SELECT DISTINCT string_agg(PA.arquivo, ' \n\n ') AS arquivos, ES.emailestagiario, P.nomepaciente,   "
+              + " ES.nomeestagiario, DS.descricaosemana, HI.descricaohorainicio "
               + " FROM pacientearquivos PA "
               + " INNER JOIN estagiariopacientes EP on EP.idpaciente = PA.idpaciente "
               + " INNER JOIN estagiario ES on ES.idestagiario = EP.idestagiario "
               + " INNER JOIN paciente P on P.idpaciente = EP.idpaciente "
-              + " WHERE  P.idpaciente = $1 "
-              + " AND  PA.arquivo IS NOT NULL "
+              + " INNER JOIN agenda A on A.idpaciente = P.idpaciente "
+              + " INNER JOIN diasemana DS on DS.iddiasemana = A.iddiasemana "
+              + " INNER JOIN horainicio HI on HI.idhorainicio = A.idhorainicio "
+              + " WHERE P.idpaciente = $1 "
+              + " AND PA.arquivo IS NOT NULL "
               + " GROUP BY  ES.emailestagiario, P.nomepaciente ",[data.idpaciente], (err, response) => {
     if (err) throw err;
     
-    arquivos = response.rows[0].arquivos; 
-    if (arquivos != null && arquivos != ''){      
+    if (response.rows[0] != null && response.rows[0] != ''){      
+      arquivos = response.rows[0].arquivos;     
+      texto = "Olá " + response.rows[0].nomeestagiario + ", \n\n "
+      + " O atendimento para o paciente " + response.rows[0].nomepaciente + " inicia " + response.rows[0].descricaosemana
+      + " às " + response.rows[0].descricaohorainicio + " horas. \n\n " 
+      + " Segue link dos exames \n\n " + arquivos;
       var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -215,10 +223,9 @@ router.post('/enviarExamesPaciente', function(req, res){
       
       var mailOptions = {
         from: 'no.reply.fisio@gmail.com',
-        //e-mail da muié / das molieres..
         to: response.rows[0].emailestagiario,
-        subject: "CLÍNICA FISIOTERAPIA - Exames paciente " + response.rows[0].nomepaciente ,
-        text: arquivos
+        subject: "Clínica Escola de Fisioterapia - UNIARP - Exames do paciente " + response.rows[0].nomepaciente ,
+        text: texto
       };
       
       transporter.sendMail(mailOptions, function(error, info){

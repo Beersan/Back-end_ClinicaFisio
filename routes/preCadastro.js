@@ -29,8 +29,10 @@ router.post('/gravar', function(req, res){
   
   client.query("INSERT INTO paciente (nomepaciente, rgpaciente, cpfpaciente, datanascpaciente, rendapaciente, " 
                                         + " enderecopaciente, numeropaciente, bairropaciente, cidadepaciente, "
-                                        + "encmedicopaciente, codigoespecialidade, contato1paciente, contato2paciente, encmedpaciente ) "
-                                        + " VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)", 
+                                        + " encmedicopaciente, codigoespecialidade, contato1paciente, contato2paciente," 
+                                        + " encmedpaciente, idsemestre ) "
+                                        + " VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, "
+                                        + " (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) )", 
                                         [ data.nomePaciente,                                           
                                           data.registroGeral, 
                                           data.CPF, 
@@ -60,8 +62,9 @@ router.get('/listarPacientes', function(req, res, next) {
                 + " CASE WHEN encmedpaciente IS NULL THEN 'none' ELSE 'initial' END AS classeenc "
                 + " FROM paciente P "
                 + " INNER JOIN especialidade E ON E.codigoespecialidade = P.codigoespecialidade" 
-                + " WHERE P.aprovado IS NULL " 
-                + " ORDER BY  P.encmedicopaciente DESC, CAST(P.rendapaciente AS INT) ASC ", (err, response) => {
+                + " WHERE P.aprovado IS NULL "
+                + " AND P.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) "
+                + " ORDER BY P.encmedicopaciente DESC, CAST(P.rendapaciente AS INT) ASC ", (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          
@@ -136,6 +139,7 @@ router.get('/listarPacientesFila', function(req, res, next) {
                 + " FROM paciente P "
                 + " INNER JOIN especialidade E ON E.codigoespecialidade = P.codigoespecialidade" 
                 + " WHERE P.aprovado = 1 " 
+                + " AND P.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) "
                 + " ORDER BY  P.encmedicopaciente DESC, CAST(P.rendapaciente AS INT) ASC ", (err, response) => {
     if (err) throw err;
     res.send(response.rows);

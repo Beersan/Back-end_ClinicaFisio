@@ -6,7 +6,7 @@ router.post('/cadastrar', function(req, res){
   
   const data = {nome: req.body.nomeEstagiario, matricula: req.body.numeroMatricula, email: req.body.email, telefone: req.body.telefone};
   
-  client.query("INSERT INTO estagiario(nomeestagiario, matriculaestagiario, emailestagiario, telefoneestagiario) values($1, $2, $3, $4)", [data.nome, data.matricula, data.email, data.telefone]);         
+  client.query("INSERT INTO estagiario(nomeestagiario, matriculaestagiario, emailestagiario, telefoneestagiario, idsemestre) values($1, $2, $3, $4, (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1))", [data.nome, data.matricula, data.email, data.telefone]);         
     res.send({
       message: 'ok'
     });
@@ -15,7 +15,7 @@ router.post('/cadastrar', function(req, res){
 
 router.get('/listar', function(req, res, next) {
    
-  client.query('SELECT * from estagiario order by nomeestagiario;', (err, response) => {
+  client.query('SELECT * from estagiario where estagiario.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) order by nomeestagiario;', (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          

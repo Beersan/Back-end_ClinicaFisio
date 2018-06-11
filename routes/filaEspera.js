@@ -25,6 +25,7 @@ router.get('/listarPacientesFila', function(req, res, next) {
                 + "   LEFT JOIN estagiariopacientes EP ON EP.idpaciente = P.idpaciente " 
                 + "   LEFT JOIN estagiario ES ON ES.idestagiario = EP.idestagiario " 
                 + "   WHERE P.aprovado = 1 " 
+                + "   AND P.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) "
                 + " ORDER BY  P.encmedicopaciente DESC, CAST(P.rendapaciente AS INT) ASC ", (err, response) => {
     if (err) throw err;
     res.send(response.rows);
@@ -44,6 +45,7 @@ router.get('/listarEstagiariosFila', function(req, res, next) {
                     + "           WHERE EP.idestagiario = E.idestagiario) < 2 "                    
                     + "     AND GE.ativo = 1 "
                     + "     AND GE.idestagio = 1 "
+                    + "     AND GR.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) "
                     + "  	  ORDER BY E.nomeestagiario, GR.descricaogrupo" , (err, response) => {
         if (err) throw err;
         res.send(response.rows);
