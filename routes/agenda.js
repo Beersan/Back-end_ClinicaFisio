@@ -169,7 +169,7 @@ router.get('/listar', function(req, res, next) {
               + " INNER JOIN diasemana ds on ds.iddiasemana = ag.iddiasemana "
               + " INNER JOIN horainicio hi on hi.idhorainicio = ag.idhorainicio "
               + " AND ag.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) "
-              + " ORDER BY ag.datainicio ", (err, response) => {
+              + " ORDER BY ag.idagenda ", (err, response) => {
     if (err) throw err;
     res.send(response.rows);
   });          
