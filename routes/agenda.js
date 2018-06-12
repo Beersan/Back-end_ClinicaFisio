@@ -231,12 +231,12 @@ router.post('/enviarExamesPaciente', function(req, res){
       
       transporter.sendMail(mailOptions, function(error, info){
         if (error) {
-          console.log(error);
+          mensagem = error;
         } else {
-          console.log('Email enviado: ' + info.response);
+          mensagem = 'Email enviado: ' + info.response;
         }
       });
-      mensagem = "enviado";
+      //mensagem = "enviado";
     } else {
       mensagem = "semArquivo";
     }
