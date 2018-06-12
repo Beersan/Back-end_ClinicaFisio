@@ -20,6 +20,7 @@ router.get('/listarPacientesFila', function(req, res, next) {
                 + " P.enderecopaciente,	P.idpaciente,	P.nomepaciente,	P.numeropaciente, "
                 + " P.observacoespaciente,	P.rendapaciente,	P.rgpaciente, E.descricaoespecialidade, "
                 + " CASE WHEN ES.nomeestagiario IS NULL THEN 'Não vinculado' ELSE ES.nomeestagiario END AS nomeEstagiario "
+                + " termoimagem, termoconcordancia "
                 + " FROM paciente P "
                 + "   INNER JOIN especialidade E ON E.codigoespecialidade = P.codigoespecialidade" 
                 + "   LEFT JOIN estagiariopacientes EP ON EP.idpaciente = P.idpaciente " 
@@ -53,8 +54,9 @@ router.get('/listarEstagiariosFila', function(req, res, next) {
 });
 
 router.post('/gravarAnexosPaciente', function(req, res){   
-  const data = {anexos: req.body.anexos, idpaciente: req.body.idpaciente};
+  const data = {anexos: req.body.anexos, idpaciente: req.body.idpaciente, imagem: req.body.anexoImagem, conc: req.body.anexoConc};
    
+  client.query("UPDATE paciente SET termoimagem = $1, termoconcordancia = $2 WHERE idpaciente = $3", [data.imagem, data.conc, data.idpaciente]);         
   client.query("DELETE FROM pacientearquivos WHERE idpaciente = $1", [data.idpaciente]);         
   for (i = 0; i <= data.anexos.length; i++){
     client.query("INSERT INTO pacientearquivos(idpaciente,arquivo) values($1, $2)", [data.idpaciente, data.anexos[i]]);         
