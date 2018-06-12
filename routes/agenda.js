@@ -203,7 +203,8 @@ router.post('/enviarExamesPaciente', function(req, res){
               + " INNER JOIN horainicio HI on HI.idhorainicio = A.idhorainicio "
               + " WHERE P.idpaciente = $1 "
               + " AND PA.arquivo IS NOT NULL "
-              + " GROUP BY  ES.emailestagiario, P.nomepaciente ",[data.idpaciente], (err, response) => {
+              + " GROUP BY  ES.emailestagiario, P.nomepaciente, "
+              + " ES.nomeestagiario, DS.descricaosemana, HI.descricaohorainicio ",[data.idpaciente], (err, response) => {
     if (err) throw err;
     
     if (response.rows[0] != null && response.rows[0] != ''){      
