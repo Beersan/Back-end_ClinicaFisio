@@ -40,11 +40,8 @@ router.get('/listarEstagiariosFila', function(req, res, next) {
                     + "  		INNER JOIN grupo GR ON GR.idgrupo = GE.idgrupo "
                     + "     INNER JOIN estagio EST ON EST.idestagio = GE.idestagio "
                     + "  		INNER JOIN professor P ON P.idestagio = GE.idestagio "
-                    + "  		INNER JOIN especialidade ESP ON ESP.codigoespecialidade = P.codigoespecialidade "
-                    + "     WHERE (SELECT COUNT(EP.idestagiario) "
-                    + "               FROM estagiariopacientes EP " 
-                    + "           WHERE EP.idestagiario = E.idestagiario) < 2 "                    
-                    + "     AND GE.ativo = 1 "
+                    + "  		INNER JOIN especialidade ESP ON ESP.codigoespecialidade = P.codigoespecialidade "                    
+                    + "     WHERE GE.ativo = 1 "
                     + "     AND GE.idestagio = 1 "
                     + "     AND GR.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) "
                     + "  	  ORDER BY E.nomeestagiario, GR.descricaogrupo" , (err, response) => {

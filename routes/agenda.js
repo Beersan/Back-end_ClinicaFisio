@@ -190,8 +190,7 @@ router.post('/excluir', function(req, res){
 
 
 router.post('/enviarExamesPaciente', function(req, res){
-  var arquivos, texto;
-  var mensagem = "teste";
+  var arquivos, mensagem, texto;
   const data = {idpaciente: req.body.idpaciente};
   client.query(" SELECT DISTINCT string_agg(PA.arquivo, ' \n\n') AS arquivos, ES.emailestagiario, P.nomepaciente,   "
               + " ES.nomeestagiario, DS.descricaosemana, HI.descricaohorainicio "
@@ -232,12 +231,12 @@ router.post('/enviarExamesPaciente', function(req, res){
       
       transporter.sendMail(mailOptions, function(error, info){
         if (error) {
-          //mensagem = error;
-          mensagem = "erro";
+          console.log(error);
         } else {
-          mensagem = 'Email enviado: ' + info.response;
+          console.log('Email enviado: ' + info.response);
         }
       });
+      mensagem = "enviado";
     } else {
       mensagem = "semArquivo";
     }
