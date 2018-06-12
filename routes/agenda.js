@@ -192,7 +192,7 @@ router.post('/excluir', function(req, res){
 router.post('/enviarExamesPaciente', function(req, res){
   var arquivos, mensagem, texto;
   const data = {idpaciente: req.body.idpaciente};
-  client.query(" SELECT DISTINCT string_agg(PA.arquivo, ' \n\n ') AS arquivos, ES.emailestagiario, P.nomepaciente,   "
+  client.query(" SELECT DISTINCT string_agg(PA.arquivo, ' \n\n') AS arquivos, ES.emailestagiario, P.nomepaciente,   "
               + " ES.nomeestagiario, DS.descricaosemana, HI.descricaohorainicio "
               + " FROM pacientearquivos PA "
               + " INNER JOIN estagiariopacientes EP on EP.idpaciente = PA.idpaciente "
@@ -204,15 +204,15 @@ router.post('/enviarExamesPaciente', function(req, res){
               + " WHERE P.idpaciente = $1 "
               + " AND PA.arquivo IS NOT NULL "
               + " GROUP BY  ES.emailestagiario, P.nomepaciente, "
-              + " ES.nomeestagiario, DS.descricaosemana, HI.descricaohorainicio ",[data.idpaciente], (err, response) => {
+              + " ES.nomeestagiario, DS.descricaosemana, HI.descricaohorainicio ", [data.idpaciente], (err, response) => {
     if (err) throw err;
     
     if (response.rows[0] != null && response.rows[0] != ''){      
       arquivos = response.rows[0].arquivos;     
-      texto = "Olá " + response.rows[0].nomeestagiario + ", \n\n "
-      + " O atendimento para o paciente " + response.rows[0].nomepaciente + " inicia " + response.rows[0].descricaosemana
-      + " às " + response.rows[0].descricaohorainicio + " horas. \n\n " 
-      + " Segue link dos exames \n\n " + arquivos;
+      texto = "Olá " + response.rows[0].nomeestagiario + ", \n\n"
+      + "O atendimento para o paciente " + response.rows[0].nomepaciente + " inicia " + response.rows[0].descricaosemana
+      + " às " + response.rows[0].descricaohorainicio + " horas. \n\n"  
+      + "Segue link dos exames: \n\n" + arquivos;
       var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
