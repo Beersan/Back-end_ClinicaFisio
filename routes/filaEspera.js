@@ -19,7 +19,7 @@ router.get('/listarPacientesFila', function(req, res, next) {
                 + " P.cpfpaciente, P.datanascpaciente, P.encmedicopaciente, P.encmedpaciente, "
                 + " P.enderecopaciente,	P.idpaciente,	P.nomepaciente,	P.numeropaciente, "
                 + " P.observacoespaciente,	P.rendapaciente,	P.rgpaciente, E.descricaoespecialidade, "
-                + " CASE WHEN ES.nomeestagiario IS NULL THEN 'Não vinculado' ELSE ES.nomeestagiario END AS nomeEstagiario "
+                + " CASE WHEN ES.nomeestagiario IS NULL THEN 'Não vinculado' ELSE ES.nomeestagiario END AS nomeEstagiario, "
                 + " termoimagem, termoconcordancia "
                 + " FROM paciente P "
                 + "   INNER JOIN especialidade E ON E.codigoespecialidade = P.codigoespecialidade" 
