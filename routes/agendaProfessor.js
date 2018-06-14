@@ -44,18 +44,21 @@ router.post('/inserirAgenda', function (req, res, next){
         descricaoHoraInicio : req.body.horaInicio,
         descricaoHoraFim : req.body.horaFim,
     };
-    for(i = 0; i <= data.descricaoDiaSemana.length -1; i++){
-
-        client.query("insert into agendaprofessor (idprofessor, iddiasemana, idperiodo, idhorainicio, idhorafim) values ($1, " + 
-            "(select iddiasemana from diasemana where descricaosemana = ($2))," +
-            "(select idperiodo from periodo where descricaoperiodo = ($3))," +
-            "(select idhorainicio from horainicio where descricaohorainicio = ($4)), " +
-            "(select idhorafim from horafim where descricaohorafim = ($5)))"
-            ,[data.idprofessor, data.descricaoDiaSemana[i], data.descperiodo[i], data.descricaoHoraInicio[i], data.descricaoHoraFim[i]]);
-    }
-    res.send({
-        message: 'ok'
+    
+    client.query("DELETE FROM agendaprofessor WHERE idprofessor = $1", [data.idprofessor], (err, response) => {
+        for(i = 0; i <= data.descricaoDiaSemana.length -1; i++){
+            client.query("insert into agendaprofessor (idprofessor, iddiasemana, idperiodo, idhorainicio, idhorafim) values ($1, " + 
+                "(select iddiasemana from diasemana where descricaosemana = ($2))," +
+                "(select idperiodo from periodo where descricaoperiodo = ($3))," +
+                "(select idhorainicio from horainicio where descricaohorainicio = ($4)), " +
+                "(select idhorafim from horafim where descricaohorafim = ($5)))"
+                ,[data.idprofessor, data.descricaoDiaSemana[i], data.descperiodo[i], data.descricaoHoraInicio[i], data.descricaoHoraFim[i]]);
+        }
+        res.send({
+            message: 'ok'
+        });
     });
+    
 });
 router.post('/listarAgenda', function (req, res, next){
     const data ={
