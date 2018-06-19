@@ -34,13 +34,11 @@ router.get('/listarPacientesFila', function(req, res, next) {
 });
 
 router.get('/listarEstagiariosFila', function(req, res, next) {
-    client.query("SELECT E.idestagiario, E.nomeestagiario, GR.descricaogrupo, P.nomeprofessor, ESP.descricaoespecialidade"
+    client.query("SELECT E.idestagiario, E.nomeestagiario, GR.descricaogrupo "
                     + " FROM grupoestagiarios GE "
                     + "  		INNER JOIN estagiario E ON E.idestagiario = GE.idestagiario "
                     + "  		INNER JOIN grupo GR ON GR.idgrupo = GE.idgrupo "
                     + "     INNER JOIN estagio EST ON EST.idestagio = GE.idestagio "
-                    + "  		INNER JOIN professor P ON P.idestagio = GE.idestagio "
-                    + "  		INNER JOIN especialidade ESP ON ESP.codigoespecialidade = P.codigoespecialidade "                    
                     + "     WHERE GE.ativo = 1 "
                     + "     AND GE.idestagio = 1 "
                     + "     AND GR.idsemestre = (SELECT idsemestre FROM semestre WHERE ativo = 1 LIMIT 1) "
